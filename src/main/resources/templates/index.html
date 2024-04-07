@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en" >
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${pageTitle}"></title>
+</head>
+<body>
+<h1 th:text="${pageTitle}"></h1>
+<div th:each="object : ${objectsFromController}">
+    <div th:if="${object instanceof T(org.caskol.warcraft_database.models.SpellSchool)}">
+        <span th:text="${object.getId()}"></span>
+        <span th:text="${object.getName()}"></span>
+    </div>
+</div>
+</body>
+</html>

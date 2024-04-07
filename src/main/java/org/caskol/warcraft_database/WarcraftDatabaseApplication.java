@@ -9,5 +9,4 @@ public class WarcraftDatabaseApplication {
     public static void main(String[] args) {
         SpringApplication.run(WarcraftDatabaseApplication.class, args);
     }
-
 }

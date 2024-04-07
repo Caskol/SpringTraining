@@ -15,13 +15,17 @@ import java.util.List;
 @NoArgsConstructor
 @Table(name = "classes")
 @Component
-public class Class extends BaseEntity {
+public class WarcraftClass extends BaseEntity {
     @Column(name = "description")
     private String description;
 
-    @ManyToMany(mappedBy = "classList")
+    @OneToOne
+    @JoinColumn(name = "icon_id", referencedColumnName = "id")
+    private Icon icon;
+
+    @ManyToMany(mappedBy = "warcraftClassList")
     private List<ClassResource> classResourceList;
 
-    @OneToMany(mappedBy = "aClass")
+    @OneToMany(mappedBy = "warcraftClass")
     private List<Spec> specList;
 }

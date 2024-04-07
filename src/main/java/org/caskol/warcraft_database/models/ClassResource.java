@@ -22,7 +22,7 @@ public class ClassResource extends BaseEntity {
             inverseJoinColumns = @JoinColumn(name = "class_id", referencedColumnName = "id"),
             uniqueConstraints = @UniqueConstraint(columnNames = {"class_resource_id", "class_id"})
     )
-    private List<Class> classList;
+    private List<WarcraftClass> warcraftClassList;
     public ClassResource(@NotBlank(message = "Это поле не может быть пустым") @Min(value = 4, message = "Это поле должно содержать как минимум 4 символа") @NonNull String name) {
         super(name);
     }

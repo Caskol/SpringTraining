@@ -1,7 +1,7 @@
 package org.caskol.warcraft_database.services;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.caskol.warcraft_database.models.SpellSchool;
 import org.caskol.warcraft_database.repositories.SpellSchoolRepository;
@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Getter
 @Setter
 @Service
@@ -22,17 +22,15 @@ public class SpellSchoolService{
     {
         return spellSchoolRepository.findById(id);
     }
-    public void add(String name)
+    @Transactional(readOnly = false)
+    public void save(SpellSchool spellSchool)
     {
-        spellSchoolRepository.save(new SpellSchool(name));
+        spellSchoolRepository.save(spellSchool);
     }
+    @Transactional(readOnly = false)
     public void delete(int id)
     {
         spellSchoolRepository.deleteById(id);
-    }
-    public void update(SpellSchool spellSchool)
-    {
-        spellSchoolRepository.save(spellSchool);
     }
     public List<SpellSchool> getAll()
     {

@@ -3,41 +3,33 @@ package org.caskol.warcraft_database.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.Setter;
+import jakarta.validation.constraints.Size;
+import lombok.*;
 import org.caskol.warcraft_database.utils.BaseEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Set;
 
-@Entity
-@Component
-@Table(name="specs")
 @Getter
 @Setter
 @NoArgsConstructor
-public class Spec extends BaseEntity {
+@AllArgsConstructor
+@Entity
+@Table(name="specs")
+public class Spec{
+    @Id
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
+    @NotBlank(message = "Это поле не может быть пустым")
+    @Column(name = "name")
+    @Size(min = 4, message = "Это поле должно содержать как минимум 4 символа")
+    private String name;
+
     @Column(name = "description")
     private String description;
-
-    public Spec(@NotBlank(message = "Это поле не может быть пустым") @Min(value = 4, message = "Это поле должно содержать как минимум 4 символа") @NonNull String name, String description, Role role, WarcraftClass warcraftClass, Icon icon, List<Stat> statList) {
-        super(name);
-        this.description = description;
-        this.role = role;
-        this.warcraftClass = warcraftClass;
-        this.icon = icon;
-        this.statList = statList;
-    }
-
-    public Spec(@NotBlank(message = "Это поле не может быть пустым") @Min(value = 4, message = "Это поле должно содержать как минимум 4 символа") @NonNull String name, String description, Role role, WarcraftClass warcraftClass, Icon icon) {
-        super(name);
-        this.description = description;
-        this.role = role;
-        this.warcraftClass = warcraftClass;
-        this.icon = icon;
-    }
 
     @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE},fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id", referencedColumnName = "id")
@@ -59,5 +51,4 @@ public class Spec extends BaseEntity {
             uniqueConstraints = @UniqueConstraint(columnNames = {"spec_id", "stat_id"})
     )
     private List<Stat> statList;
-
 }

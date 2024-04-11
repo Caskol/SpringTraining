@@ -18,7 +18,7 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public class SpecService {
     private final SpecRepository specRepository;
-    public Optional<Spec> getName(int id)
+    public Optional<Spec> getById(int id)
     {
         return specRepository.findById(id);
     }

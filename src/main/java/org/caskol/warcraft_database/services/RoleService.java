@@ -18,7 +18,7 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public class RoleService {
     private final RoleRepository roleRepository;
-    public Optional<Role> getName(int id)
+    public Optional<Role> getById(int id)
     {
         return roleRepository.findById(id);
     }

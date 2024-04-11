@@ -1,14 +1,19 @@
 package org.caskol.warcraft_database.dto;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
 public class SpecDTO {
+    private int id;
     private String name;
     private String description;
-    private int role_id;
-    private int class_id;
-    private int icon_id;
+    private RoleDTO role;
+    private WarcraftClassDTO warcraftClass;
+    private IconDTO icon;
+    private Set<StatDTO> stats;
 }

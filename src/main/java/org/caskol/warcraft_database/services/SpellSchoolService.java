@@ -18,7 +18,7 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public class SpellSchoolService{
     private final SpellSchoolRepository spellSchoolRepository;
-    public Optional<SpellSchool> getName(int id)
+    public Optional<SpellSchool> getById(int id)
     {
         return spellSchoolRepository.findById(id);
     }

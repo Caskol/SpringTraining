@@ -18,7 +18,7 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public class IconService {
     private final IconRepository iconRepository;
-    public Optional<Icon> getName(int id)
+    public Optional<Icon> getById(int id)
     {
         return iconRepository.findById(id);
     }

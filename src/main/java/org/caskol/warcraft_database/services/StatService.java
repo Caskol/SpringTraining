@@ -18,7 +18,7 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public class StatService {
     private final StatRepository statRepository;
-    public Optional<Stat> getName(int id)
+    public Optional<Stat> getById(int id)
     {
         return statRepository.findById(id);
     }

@@ -18,7 +18,7 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public class WacraftClassService {
     private final WarcraftClassRepository warcraftClassRepository;
-    public Optional<WarcraftClass> getName(int id)
+    public Optional<WarcraftClass> getById(int id)
     {
         return warcraftClassRepository.findById(id);
     }

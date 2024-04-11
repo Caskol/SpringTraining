@@ -18,7 +18,7 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public class ClassResourceService {
     private final ClassResourceRepository classResourceRepository;
-    public Optional<ClassResource> getName(int id)
+    public Optional<ClassResource> getById(int id)
     {
         return classResourceRepository.findById(id);
     }

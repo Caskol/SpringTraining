@@ -2,6 +2,7 @@ package org.caskol.warcraft_database.utils;
 
 import jakarta.validation.ValidationException;
 import org.caskol.warcraft_database.api.v1.exceptions.NoSuchElementFoundException;
+import org.hibernate.TransientObjectException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -22,6 +23,10 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(ValidationException.class)
     private ResponseEntity<String> handleValidationException(ValidationException e){
         return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(TransientObjectException.class)
+    private ResponseEntity<String> handleTransientException(TransientObjectException e){
+        return new ResponseEntity<>("Нельзя создавать объекты будучи внутри другого объекта.", HttpStatus.BAD_REQUEST);
     }
     public static String getBindingErrorString(BindingResult bindingResult){
         StringBuilder errorsString = new StringBuilder();

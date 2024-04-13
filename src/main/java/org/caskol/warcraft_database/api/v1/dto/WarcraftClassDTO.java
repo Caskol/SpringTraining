@@ -1,20 +1,19 @@
 package org.caskol.warcraft_database.api.v1.dto;
 
-import jakarta.validation.constraints.NotNull;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import org.caskol.warcraft_database.utils.BaseDTO;
+import lombok.Setter;
 
 import java.util.List;
-import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class WarcraftClassDTO{
     private int id;
-    private int name;
+    private String name;
     private String description;
     private IconDTO icon;
-    private Set<ClassResourceDTO> classResources;
+    private List<ClassResourceDTO> classResources;
+    private List<SpecDTO> specs;
 }

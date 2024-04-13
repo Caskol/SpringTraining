@@ -1,15 +1,15 @@
 package org.caskol.warcraft_database.api.v1.models;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.*;
-import org.caskol.warcraft_database.utils.BaseEntity;
-import org.springframework.stereotype.Component;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -31,12 +31,13 @@ public class WarcraftClass{
     private String description;
 
     @OneToOne
+    @NotNull
     @JoinColumn(name = "icon_id", referencedColumnName = "id")
     private Icon icon;
-
+    @NotNull
     @ManyToMany(mappedBy = "warcraftClassList")
     private List<ClassResource> classResourceList;
-
+    @NotNull
     @OneToMany(mappedBy = "warcraftClass", orphanRemoval = true)
     private List<Spec> specList;
 }

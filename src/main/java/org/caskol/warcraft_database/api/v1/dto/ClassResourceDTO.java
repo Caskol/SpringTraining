@@ -1,18 +1,20 @@
 package org.caskol.warcraft_database.api.v1.dto;
 
-import lombok.Data;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
-@Data
-@RequiredArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
 public class ClassResourceDTO{
     private int id;
-    @NonNull
+    @NotBlank(message = "Это поле не может быть пустым")
+    @Size(min = 4, message = "Это поле должно содержать как минимум 4 символа")
     private String name;
     private List<WarcraftClassDTO> classes;
 }

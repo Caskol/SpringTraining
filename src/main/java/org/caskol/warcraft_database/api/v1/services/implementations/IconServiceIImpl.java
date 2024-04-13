@@ -1,8 +1,10 @@
 package org.caskol.warcraft_database.api.v1.services.implementations;
 
+import jakarta.validation.ValidationException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.caskol.warcraft_database.utils.RestExceptionHandler;
 import org.caskol.warcraft_database.api.v1.dto.IconDTO;
 import org.caskol.warcraft_database.api.v1.exceptions.NoSuchElementFoundException;
 import org.caskol.warcraft_database.api.v1.mappers.IconMapper;
@@ -11,6 +13,8 @@ import org.caskol.warcraft_database.api.v1.repositories.IconRepository;
 import org.caskol.warcraft_database.api.v1.services.IconService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +27,7 @@ import java.util.Optional;
 public class IconServiceIImpl implements IconService {
     private final IconRepository iconRepository;
     private final IconMapper iconMapper;
+    private final Validator validator;
     @Transactional(readOnly = false)
     public IconDTO create(IconDTO iconDTO) {
         Icon newIcon = iconMapper.toIcon(iconDTO);
@@ -44,6 +49,9 @@ public class IconServiceIImpl implements IconService {
         Optional<Icon> iconFromRepo = iconRepository.findById(iconDTO.getId());
         Icon icon = iconFromRepo.orElseThrow(() -> new NoSuchElementFoundException(Icon.class.getSimpleName()+ " with id="+iconDTO.getId()+" was not found"));
         iconMapper.updateIconFromDto(iconDTO,icon);
+        Errors errors = validator.validateObject(icon);
+        if (errors.hasErrors())
+            throw new ValidationException(RestExceptionHandler.VALIDATION_EXCEPTION_MSG + RestExceptionHandler.getValidationErrorString(errors));
         iconRepository.save(icon);
     }
     @Transactional(readOnly = false)

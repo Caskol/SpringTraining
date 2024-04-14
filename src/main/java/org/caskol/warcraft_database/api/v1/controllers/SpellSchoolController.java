@@ -19,43 +19,37 @@ import java.util.List;
 @RequestMapping("/api/v1/spell_school")
 public class SpellSchoolController {
     private final SpellSchoolService spellSchoolService;
-
     @GetMapping
-    public ResponseEntity<List<SpellSchoolDTO>> getIcons() {
+    public ResponseEntity<List<SpellSchoolDTO>> getSpellSchools() {
         return ResponseEntity.ok(spellSchoolService.getAll());
     }
-
     @GetMapping("/{id}")
-    public ResponseEntity<SpellSchoolDTO> getIconWithId(@PathVariable("id") int id) {
+    public ResponseEntity<SpellSchoolDTO> getSpellSchoolWithId(@PathVariable("id") int id) {
         return ResponseEntity.ok(spellSchoolService.getById(id));
     }
-
-    @PatchMapping("/change/{id}")
-    public HttpStatus patchIcon(@PathVariable("id") int id, @RequestBody SpellSchoolDTO spellSchoolDTO){
+    @PatchMapping("/{id}")
+    public HttpStatus patchSpellSchool(@PathVariable("id") int id, @RequestBody SpellSchoolDTO spellSchoolDTO){
         spellSchoolDTO.setId(id);
         spellSchoolService.update(spellSchoolDTO);
         return HttpStatus.OK;
     }
-    @PutMapping("/change/{id}")
-    public HttpStatus putIcon(@PathVariable("id") int id, @RequestBody @Valid SpellSchoolDTO spellSchoolDTO, BindingResult bindingResult){
+    @PutMapping("/{id}")
+    public HttpStatus putSpellSchool(@PathVariable("id") int id, @RequestBody @Valid SpellSchoolDTO spellSchoolDTO, BindingResult bindingResult){
         if (bindingResult.hasErrors())
             throw new ValidationException(RestExceptionHandler.VALIDATION_EXCEPTION_MSG + RestExceptionHandler.getBindingErrorString(bindingResult));
         spellSchoolDTO.setId(id);
         spellSchoolService.update(spellSchoolDTO);
         return HttpStatus.OK;
     }
-
-    @PostMapping("/add")
-    public ResponseEntity<SpellSchoolDTO> createIcon(@RequestBody @Valid SpellSchoolDTO spellSchoolDTO, BindingResult bindingResult){
+    @PostMapping
+    public ResponseEntity<SpellSchoolDTO> createSpellSchool(@RequestBody @Valid SpellSchoolDTO spellSchoolDTO, BindingResult bindingResult){
         if (bindingResult.hasErrors())
             throw new ValidationException(RestExceptionHandler.VALIDATION_EXCEPTION_MSG + RestExceptionHandler.getBindingErrorString(bindingResult));
         return ResponseEntity.ok(spellSchoolService.create(spellSchoolDTO));
     }
-    @DeleteMapping("/delete/{id}")
-    public HttpStatus deleteIcon(@PathVariable("id") int id){
+    @DeleteMapping("/{id}")
+    public HttpStatus deleteSpellSchool(@PathVariable("id") int id){
         spellSchoolService.delete(id);
         return HttpStatus.OK;
     }
-
-
 }

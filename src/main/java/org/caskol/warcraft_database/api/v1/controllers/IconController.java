@@ -30,13 +30,13 @@ public class IconController {
         return ResponseEntity.ok(iconService.getById(id));
     }
 
-    @PatchMapping("/change/{id}")
+    @PatchMapping("/{id}")
     public HttpStatus patchIcon(@PathVariable("id") int id, @RequestBody IconDTO iconDTO){
         iconDTO.setId(id);
         iconService.update(iconDTO);
         return HttpStatus.OK;
     }
-    @PutMapping("/change/{id}")
+    @PutMapping("/{id}")
     public HttpStatus putIcon(@PathVariable("id") int id, @RequestBody @Valid IconDTO iconDTO, BindingResult bindingResult){
         if (bindingResult.hasErrors())
             throw new ValidationException(RestExceptionHandler.VALIDATION_EXCEPTION_MSG + RestExceptionHandler.getBindingErrorString(bindingResult));
@@ -45,13 +45,13 @@ public class IconController {
         return HttpStatus.OK;
     }
 
-    @PostMapping("/add")
+    @PostMapping()
     public ResponseEntity<IconDTO> createIcon(@RequestBody @Valid IconDTO iconDTO, BindingResult bindingResult){
         if (bindingResult.hasErrors())
             throw new ValidationException(RestExceptionHandler.VALIDATION_EXCEPTION_MSG + RestExceptionHandler.getBindingErrorString(bindingResult));
         return ResponseEntity.ok(iconService.create(iconDTO));
     }
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public HttpStatus deleteIcon(@PathVariable("id") int id){
         iconService.delete(id);
         return HttpStatus.OK;

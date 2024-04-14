@@ -26,4 +26,6 @@ public class Icon{
     @Column(name = "icon_path")
     private String path;
 
+    @OneToOne(mappedBy = "icon")
+    private Role role;
 }

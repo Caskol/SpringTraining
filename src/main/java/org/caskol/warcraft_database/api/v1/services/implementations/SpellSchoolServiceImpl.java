@@ -1,9 +1,7 @@
 package org.caskol.warcraft_database.api.v1.services.implementations;
 
 import jakarta.validation.ValidationException;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.caskol.warcraft_database.api.v1.dto.SpellSchoolDTO;
 import org.caskol.warcraft_database.api.v1.exceptions.NoSuchElementFoundException;
 import org.caskol.warcraft_database.api.v1.mappers.SpellSchoolMapper;
@@ -20,8 +18,6 @@ import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
-@Getter
-@Setter
 @Service
 @Transactional(readOnly = true)
 public class SpellSchoolServiceImpl implements SpellSchoolService {
@@ -35,35 +31,30 @@ public class SpellSchoolServiceImpl implements SpellSchoolService {
         spellSchoolRepository.save(newSpellSchool);
         return spellSchoolMapper.toSpellSchoolDTO(newSpellSchool);
     }
-
-    public SpellSchoolDTO getById(int id)
-    {
-        Optional<SpellSchool> icon = spellSchoolRepository.findById(id);
-        if (icon.isPresent())
-            return spellSchoolMapper.toSpellSchoolDTO(icon.get());
-        else
+    public SpellSchoolDTO getById(int id) {
+        Optional<SpellSchool> spellSchool = spellSchoolRepository.findById(id);
+        if (!spellSchool.isPresent())
             throw new NoSuchElementFoundException(SpellSchool.class.getSimpleName()+ " with id="+id+" was not found");
+        return spellSchoolMapper.toSpellSchoolDTO(spellSchool.get());
     }
     @Transactional(readOnly = false)
-    public void update(SpellSchoolDTO spellSchoolDTO)
-    {
-        Optional<SpellSchool> iconFromRepo = spellSchoolRepository.findById(spellSchoolDTO.getId());
-        SpellSchool icon = iconFromRepo.orElseThrow(() -> new NoSuchElementFoundException(SpellSchool.class.getSimpleName()+ " with id="+spellSchoolDTO.getId()+" was not found"));
-        spellSchoolMapper.updateSpellSchoolFromDto(spellSchoolDTO,icon);
-        Errors errors = validator.validateObject(icon);
+    public void update(SpellSchoolDTO spellSchoolDTO) {
+        Optional<SpellSchool> spellSchoolFromRepo = spellSchoolRepository.findById(spellSchoolDTO.getId());
+        if (!spellSchoolFromRepo.isPresent())
+            throw new NoSuchElementFoundException(SpellSchool.class.getSimpleName()+ " with id="+spellSchoolDTO.getId()+" was not found");
+        spellSchoolMapper.updateSpellSchoolFromDto(spellSchoolDTO,spellSchoolFromRepo.get());
+        Errors errors = validator.validateObject(spellSchoolFromRepo.get());
         if (errors.hasErrors())
             throw new ValidationException(RestExceptionHandler.VALIDATION_EXCEPTION_MSG + RestExceptionHandler.getValidationErrorString(errors));
-        spellSchoolRepository.save(icon);
+        spellSchoolRepository.save(spellSchoolFromRepo.get());
     }
     @Transactional(readOnly = false)
-    public void delete(int id)
-    {
+    public void delete(int id) {
         if (!spellSchoolRepository.findById(id).isPresent())
             throw new NoSuchElementFoundException(SpellSchool.class.getSimpleName()+ " with id="+ id+ " was not found");
         spellSchoolRepository.deleteById(id);
     }
-    public List<SpellSchoolDTO> getAll()
-    {
+    public List<SpellSchoolDTO> getAll() {
         return spellSchoolRepository.findAll()
                 .stream()
                 .map(spellSchoolMapper::toSpellSchoolDTO)

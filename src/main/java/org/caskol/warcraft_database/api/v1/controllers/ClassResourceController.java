@@ -28,13 +28,13 @@ public class ClassResourceController {
         return ResponseEntity.ok(classResourceService.getById(id));
     }
 
-    @PatchMapping("/change/{id}")
+    @PatchMapping("/{id}")
     public HttpStatus patchClassResource(@PathVariable("id") int id, @RequestBody ClassResourceDTO classResourceDTO){
         classResourceDTO.setId(id);
         classResourceService.update(classResourceDTO);
         return HttpStatus.OK;
     }
-    @PutMapping("/change/{id}")
+    @PutMapping("/{id}")
     public HttpStatus putClassResource(@PathVariable("id") int id, @RequestBody @Valid ClassResourceDTO classResourceDTO, BindingResult bindingResult){
         if (bindingResult.hasErrors())
             throw new ValidationException(RestExceptionHandler.VALIDATION_EXCEPTION_MSG + RestExceptionHandler.getBindingErrorString(bindingResult));
@@ -43,13 +43,13 @@ public class ClassResourceController {
         return HttpStatus.OK;
     }
 
-    @PostMapping("/add")
+    @PostMapping()
     public ResponseEntity<ClassResourceDTO> createClassResource(@RequestBody @Valid ClassResourceDTO classResourceDTO, BindingResult bindingResult){
         if (bindingResult.hasErrors())
             throw new ValidationException(RestExceptionHandler.VALIDATION_EXCEPTION_MSG + RestExceptionHandler.getBindingErrorString(bindingResult));
         return ResponseEntity.ok(classResourceService.create(classResourceDTO));
     }
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public HttpStatus deleteClassResource(@PathVariable("id") int id){
         classResourceService.delete(id);
         return HttpStatus.OK;

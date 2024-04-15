@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.caskol.warcraft_database.api.v1.dto.ClassResourceDTO;
 import org.caskol.warcraft_database.api.v1.exceptions.NoSuchElementFoundException;
 import org.caskol.warcraft_database.api.v1.mappers.ClassResourceMapper;
+import org.caskol.warcraft_database.api.v1.mappers.ClassResourceWithoutListsMapper;
 import org.caskol.warcraft_database.api.v1.models.ClassResource;
 import org.caskol.warcraft_database.api.v1.repositories.ClassResourceRepository;
 import org.caskol.warcraft_database.api.v1.services.ClassResourceService;
@@ -23,6 +24,7 @@ import java.util.Optional;
 public class ClassResourceServiceImpl implements ClassResourceService {
     private final ClassResourceRepository classResourceRepository;
     private final ClassResourceMapper classResourceMapper;
+    private final ClassResourceWithoutListsMapper classResourceWithoutListsMapper;
     private final Validator validator;
 
     @Transactional(readOnly = false)
@@ -60,7 +62,7 @@ public class ClassResourceServiceImpl implements ClassResourceService {
     public List<ClassResourceDTO> getAll() {
         return classResourceRepository.findAll()
                 .stream()
-                .map(classResourceMapper::dataWithoutListToDTO)
+                .map(classResourceWithoutListsMapper::dataWithoutListToDTO)
                 .toList();
     }
 

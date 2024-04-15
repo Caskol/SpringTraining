@@ -21,7 +21,7 @@ public class WarcraftClass{
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @NotBlank(message = "Это поле не может быть пустым")
     @Column(name = "name")
@@ -39,5 +39,5 @@ public class WarcraftClass{
     private List<ClassResource> classResourceList;
     @NotNull
     @OneToMany(mappedBy = "warcraftClass", orphanRemoval = true)
-    private List<Spec> specList;
+    private List<Spec> specs;
 }

@@ -16,6 +16,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     public static final String VALIDATION_EXCEPTION_MSG = "Поля объекта были неверно заполнены. Дополнительная информация: ";
+    public static final String REFERENCE_ID_NOT_FOUND = "Чтобы изменить связь с этим объектом необходимо указывать верный ID этого объекта";
     @ExceptionHandler(NoSuchElementFoundException.class)
     private ResponseEntity<String> handleNoSuchElement(NoSuchElementFoundException e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);

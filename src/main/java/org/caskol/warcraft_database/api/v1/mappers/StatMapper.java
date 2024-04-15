@@ -1,27 +1,19 @@
 package org.caskol.warcraft_database.api.v1.mappers;
 
-import org.caskol.warcraft_database.api.v1.dto.SpecDTO;
 import org.caskol.warcraft_database.api.v1.dto.StatDTO;
-import org.caskol.warcraft_database.api.v1.models.Spec;
 import org.caskol.warcraft_database.api.v1.models.Stat;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.NullValuePropertyMappingStrategy;
-
-import java.util.List;
+import org.mapstruct.*;
 
 @Mapper(componentModel = "spring",
-        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+        uses = {SpecWithoutListsMapper.class})
 public interface StatMapper {
+    @Named("AllStatDataToDTO")
+    @Mapping(target = "specs", qualifiedByName = "ListOfBasicSpecDTOData")
     StatDTO allDataToStatDTO(Stat stat);
-    @Mapping(target = "specList", ignore = true)
-    StatDTO dataWithoutListToStatDTO(Stat stat);
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "specs", qualifiedByName = "ListOfBasicSpecData")
     Stat toStat(StatDTO statDTO);
     @Mapping(target = "id", ignore = true)
     void updateStatFromDTO(StatDTO statDTO, @MappingTarget Stat stat);
-
-    List<SpecDTO> mapSpecDTOToEntity(List<Spec> specList);
-    List<Spec> mapEntityToStatDTO(List<SpecDTO> specDTOList);
 }

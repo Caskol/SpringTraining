@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.caskol.warcraft_database.api.v1.dto.StatDTO;
 import org.caskol.warcraft_database.api.v1.exceptions.NoSuchElementFoundException;
 import org.caskol.warcraft_database.api.v1.mappers.StatMapper;
+import org.caskol.warcraft_database.api.v1.mappers.StatWithoutListsMapper;
 import org.caskol.warcraft_database.api.v1.models.Stat;
 import org.caskol.warcraft_database.api.v1.repositories.StatRepository;
 import org.caskol.warcraft_database.api.v1.services.StatService;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 public class StatServiceImpl implements StatService {
     private final StatRepository statRepository;
     private final StatMapper statMapper;
+    private final StatWithoutListsMapper statWithoutListsMapper;
     private final Validator validator;
     public StatDTO getById(int id)
     {
@@ -58,7 +60,7 @@ public class StatServiceImpl implements StatService {
     {
         return statRepository.findAll()
                 .stream()
-                .map(statMapper::dataWithoutListToStatDTO)
+                .map(statWithoutListsMapper::dataWithoutListToStatDTO)
                 .collect(Collectors.toList());
     }
 }

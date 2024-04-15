@@ -14,11 +14,11 @@ import java.util.List;
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class RoleDTO {
-    private int id;
+    private Integer id;
     @NotBlank(message = "Это поле не может быть пустым")
     @Size(min = 4, message = "Это поле должно содержать как минимум 4 символа")
     private String name;
     @NotNull(message = "Это поле не может быть пустым")
     private IconDTO icon;
-    private List<SpecDTO> specList;
+    private List<SpecDTO> specs;
 }

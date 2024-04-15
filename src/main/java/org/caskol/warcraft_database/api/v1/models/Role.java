@@ -20,7 +20,7 @@ public class Role{
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @NotBlank(message = "Это поле не может быть пустым")
     @Column(name = "name")
@@ -32,5 +32,5 @@ public class Role{
     private Icon icon;
 
     @OneToMany(mappedBy = "role", orphanRemoval = true)
-    private List<Spec> specList;
+    private List<Spec> specs;
 }

@@ -1,14 +1,15 @@
 package org.caskol.warcraft_database.api.v1.services.implementations;
 
-import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.caskol.warcraft_database.api.v1.dto.RoleDTO;
 import org.caskol.warcraft_database.api.v1.exceptions.NoSuchElementFoundException;
 import org.caskol.warcraft_database.api.v1.mappers.RoleMapper;
+import org.caskol.warcraft_database.api.v1.mappers.RoleWithoutListsMapper;
 import org.caskol.warcraft_database.api.v1.models.Role;
+import org.caskol.warcraft_database.api.v1.repositories.IconRepository;
 import org.caskol.warcraft_database.api.v1.repositories.RoleRepository;
+import org.caskol.warcraft_database.api.v1.repositories.SpecRepository;
 import org.caskol.warcraft_database.api.v1.services.RoleService;
-import org.caskol.warcraft_database.utils.RestExceptionHandler;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Errors;
@@ -23,7 +24,10 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class RoleServiceImpl implements RoleService {
     private final RoleRepository roleRepository;
+    private final IconRepository iconRepository;
+    private final SpecRepository specRepository;
     private final RoleMapper roleMapper;
+    private final RoleWithoutListsMapper roleWithoutListsMapper;
     private final Validator validator;
     public RoleDTO getById(int id)
     {
@@ -39,8 +43,6 @@ public class RoleServiceImpl implements RoleService {
             throw new NoSuchElementFoundException(Role.class.getSimpleName()+" with id="+roleDTO.getId()+" was not found.");
         roleMapper.updateRoleFromDTO(roleDTO,roleFromDatabase.get());
         Errors errors = validator.validateObject(roleFromDatabase.get());
-        if (errors.hasErrors())
-            throw new ValidationException(RestExceptionHandler.VALIDATION_EXCEPTION_MSG+RestExceptionHandler.getValidationErrorString(errors));
         roleRepository.save(roleFromDatabase.get());
     }
     @Transactional(readOnly = false)
@@ -58,7 +60,7 @@ public class RoleServiceImpl implements RoleService {
     {
         return roleRepository.findAll()
                 .stream()
-                .map(roleMapper::dataWithoutListToRoleDTO)
+                .map(roleWithoutListsMapper::dataWithoutListToRoleDTO)
                 .collect(Collectors.toList());
     }
 }

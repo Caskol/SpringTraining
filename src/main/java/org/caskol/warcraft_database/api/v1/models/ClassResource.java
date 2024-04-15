@@ -20,7 +20,7 @@ public class ClassResource {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @NotBlank(message = "Это поле не может быть пустым")
     @Column(name = "name")

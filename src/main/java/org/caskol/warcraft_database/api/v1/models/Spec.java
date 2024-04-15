@@ -20,7 +20,7 @@ public class Spec{
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @NotBlank(message = "Это поле не может быть пустым")
     @Column(name = "name")
@@ -49,5 +49,5 @@ public class Spec{
             inverseJoinColumns = @JoinColumn(name = "stat_id", referencedColumnName = "id"),
             uniqueConstraints = @UniqueConstraint(columnNames = {"spec_id", "stat_id"})
     )
-    private List<Stat> statList;
+    private List<Stat> stats;
 }

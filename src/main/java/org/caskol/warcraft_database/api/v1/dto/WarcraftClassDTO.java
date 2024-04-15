@@ -12,7 +12,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 public class WarcraftClassDTO{
-    private int id;
+    private Integer id;
     @NotBlank(message = "Это поле не может быть пустым")
     @Size(min = 4, message = "Это поле должно содержать как минимум 4 символа")
     private String name;

@@ -22,27 +22,26 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public class SpellSchoolServiceImpl implements SpellSchoolService {
     private final SpellSchoolRepository spellSchoolRepository;
-    
     private final SpellSchoolMapper spellSchoolMapper;
     private final Validator validator;
     @Transactional(readOnly = false)
     public SpellSchoolDTO create(SpellSchoolDTO spellSchoolDTO) {
-        SpellSchool newSpellSchool = spellSchoolMapper.toSpellSchool(spellSchoolDTO);
+        SpellSchool newSpellSchool = spellSchoolMapper.toEntity(spellSchoolDTO);
         spellSchoolRepository.save(newSpellSchool);
-        return spellSchoolMapper.toSpellSchoolDTO(newSpellSchool);
+        return spellSchoolMapper.toDto(newSpellSchool);
     }
     public SpellSchoolDTO getById(int id) {
         Optional<SpellSchool> spellSchool = spellSchoolRepository.findById(id);
         if (!spellSchool.isPresent())
             throw new NoSuchElementFoundException(SpellSchool.class.getSimpleName()+ " with id="+id+" was not found");
-        return spellSchoolMapper.toSpellSchoolDTO(spellSchool.get());
+        return spellSchoolMapper.toDto(spellSchool.get());
     }
     @Transactional(readOnly = false)
     public void update(SpellSchoolDTO spellSchoolDTO) {
         Optional<SpellSchool> spellSchoolFromRepo = spellSchoolRepository.findById(spellSchoolDTO.getId());
         if (!spellSchoolFromRepo.isPresent())
             throw new NoSuchElementFoundException(SpellSchool.class.getSimpleName()+ " with id="+spellSchoolDTO.getId()+" was not found");
-        spellSchoolMapper.updateSpellSchoolFromDto(spellSchoolDTO,spellSchoolFromRepo.get());
+        spellSchoolMapper.partialUpdate(spellSchoolDTO,spellSchoolFromRepo.get());
         Errors errors = validator.validateObject(spellSchoolFromRepo.get());
         if (errors.hasErrors())
             throw new ValidationException(RestExceptionHandler.VALIDATION_EXCEPTION_MSG + RestExceptionHandler.getValidationErrorString(errors));
@@ -57,7 +56,7 @@ public class SpellSchoolServiceImpl implements SpellSchoolService {
     public List<SpellSchoolDTO> getAll() {
         return spellSchoolRepository.findAll()
                 .stream()
-                .map(spellSchoolMapper::toSpellSchoolDTO)
+                .map(spellSchoolMapper::toDto)
                 .toList();
     }
 }

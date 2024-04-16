@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.caskol.warcraft_database.api.v1.dto.ClassResourceDTO;
 import org.caskol.warcraft_database.api.v1.exceptions.NoSuchElementFoundException;
 import org.caskol.warcraft_database.api.v1.mappers.ClassResourceMapper;
-import org.caskol.warcraft_database.api.v1.mappers.ClassResourceWithoutListsMapper;
 import org.caskol.warcraft_database.api.v1.models.ClassResource;
 import org.caskol.warcraft_database.api.v1.repositories.ClassResourceRepository;
 import org.caskol.warcraft_database.api.v1.services.ClassResourceService;
@@ -24,20 +23,19 @@ import java.util.Optional;
 public class ClassResourceServiceImpl implements ClassResourceService {
     private final ClassResourceRepository classResourceRepository;
     private final ClassResourceMapper classResourceMapper;
-    private final ClassResourceWithoutListsMapper classResourceWithoutListsMapper;
     private final Validator validator;
 
     @Transactional(readOnly = false)
     public ClassResourceDTO create(ClassResourceDTO classResourceDTO) {
-        ClassResource newClassResource = classResourceMapper.toClassResource(classResourceDTO);
+        ClassResource newClassResource = classResourceMapper.toEntity(classResourceDTO);
         classResourceRepository.save(newClassResource);
-        return classResourceMapper.allDataToDTO(newClassResource);
+        return classResourceMapper.toDto(newClassResource);
     }
 
     public ClassResourceDTO getById(int id) {
         Optional<ClassResource> classResource = classResourceRepository.findById(id);
         if (classResource.isPresent()) {
-            return classResourceMapper.allDataToDTO(classResource.get());
+            return classResourceMapper.toDto(classResource.get());
         }
         else
             throw new NoSuchElementFoundException(ClassResource.class.getSimpleName()+ " with id="+id+" was not found");
@@ -47,7 +45,7 @@ public class ClassResourceServiceImpl implements ClassResourceService {
         Optional<ClassResource> classResourceFromRepo = classResourceRepository.findById(classResourceDTO.getId());
         if (!classResourceFromRepo.isPresent())
             throw new NoSuchElementFoundException(ClassResource.class.getSimpleName()+ " with id="+classResourceDTO.getId()+" was not found");
-        classResourceMapper.updateClassResourceFromDto(classResourceDTO,classResourceFromRepo.get());
+        classResourceMapper.partialUpdate(classResourceDTO,classResourceFromRepo.get());
         Errors errors = validator.validateObject(classResourceFromRepo.get());
         if (errors.hasErrors())
             throw new ValidationException(RestExceptionHandler.VALIDATION_EXCEPTION_MSG + RestExceptionHandler.getValidationErrorString(errors));
@@ -62,7 +60,7 @@ public class ClassResourceServiceImpl implements ClassResourceService {
     public List<ClassResourceDTO> getAll() {
         return classResourceRepository.findAll()
                 .stream()
-                .map(classResourceWithoutListsMapper::dataWithoutListToDTO)
+                .map(classResourceMapper::toDto)
                 .toList();
     }
 

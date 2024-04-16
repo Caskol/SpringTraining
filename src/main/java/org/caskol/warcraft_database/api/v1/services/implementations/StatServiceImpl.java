@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.caskol.warcraft_database.api.v1.dto.StatDTO;
 import org.caskol.warcraft_database.api.v1.exceptions.NoSuchElementFoundException;
 import org.caskol.warcraft_database.api.v1.mappers.StatMapper;
-import org.caskol.warcraft_database.api.v1.mappers.StatWithoutListsMapper;
 import org.caskol.warcraft_database.api.v1.models.Stat;
 import org.caskol.warcraft_database.api.v1.repositories.StatRepository;
 import org.caskol.warcraft_database.api.v1.services.StatService;
@@ -25,21 +24,20 @@ import java.util.stream.Collectors;
 public class StatServiceImpl implements StatService {
     private final StatRepository statRepository;
     private final StatMapper statMapper;
-    private final StatWithoutListsMapper statWithoutListsMapper;
     private final Validator validator;
     public StatDTO getById(int id)
     {
         Optional<Stat> stat= statRepository.findById(id);
         if (!stat.isPresent())
             throw new NoSuchElementFoundException(Stat.class.getSimpleName()+" with id="+id+" was not found");
-        return statMapper.allDataToStatDTO(stat.get());
+        return statMapper.toDto(stat.get());
     }
     @Transactional(readOnly = false)
     public void update(StatDTO statDTO) {
         Optional<Stat> statFromDatabase = statRepository.findById(statDTO.getId());
         if (!statFromDatabase.isPresent())
             throw new NoSuchElementFoundException(Stat.class.getSimpleName()+" with id="+statDTO.getId()+" was not found.");
-        statMapper.updateStatFromDTO(statDTO,statFromDatabase.get());
+        statMapper.partialUpdate(statDTO,statFromDatabase.get());
         Errors errors = validator.validateObject(statFromDatabase.get());
         if (errors.hasErrors())
             throw new ValidationException(RestExceptionHandler.VALIDATION_EXCEPTION_MSG+RestExceptionHandler.getValidationErrorString(errors));
@@ -47,9 +45,9 @@ public class StatServiceImpl implements StatService {
     }
     @Transactional(readOnly = false)
     public StatDTO create(StatDTO statDTO) {
-        Stat newStat = statMapper.toStat(statDTO);
+        Stat newStat = statMapper.toEntity(statDTO);
         statRepository.save(newStat);
-        return statMapper.allDataToStatDTO(newStat);
+        return statMapper.toDto(newStat);
     }
     @Transactional(readOnly = false)
     public void delete(int id)
@@ -60,7 +58,7 @@ public class StatServiceImpl implements StatService {
     {
         return statRepository.findAll()
                 .stream()
-                .map(statWithoutListsMapper::dataWithoutListToStatDTO)
+                .map(statMapper::toDto)
                 .collect(Collectors.toList());
     }
 }

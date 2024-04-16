@@ -26,9 +26,9 @@ public class IconServiceIImpl implements IconService {
     private final Validator validator;
     @Transactional(readOnly = false)
     public IconDTO create(IconDTO iconDTO) {
-        Icon newIcon = iconMapper.toIcon(iconDTO);
+        Icon newIcon = iconMapper.toEntity(iconDTO);
         iconRepository.save(newIcon);
-        return iconMapper.toIconDTO(newIcon);
+        return iconMapper.toDto(newIcon);
     }
 
     public IconDTO getById(int id)
@@ -36,14 +36,14 @@ public class IconServiceIImpl implements IconService {
         Optional<Icon> icon = iconRepository.findById(id);
         if (!icon.isPresent())
             throw new NoSuchElementFoundException(Icon.class.getSimpleName()+ " with id="+id+" was not found");
-        return iconMapper.toIconDTO(icon.get());
+        return iconMapper.toDto(icon.get());
     }
     @Transactional(readOnly = false)
     public void update(IconDTO iconDTO) {
         Optional<Icon> iconFromRepo = iconRepository.findById(iconDTO.getId());
         if (!iconFromRepo.isPresent())
             throw new NoSuchElementFoundException(Icon.class.getSimpleName()+ " with id="+iconDTO.getId()+" was not found");
-        iconMapper.updateIconFromDto(iconDTO,iconFromRepo.get());
+        iconMapper.partialUpdate(iconDTO,iconFromRepo.get());
         Errors errors = validator.validateObject(iconFromRepo.get());
         if (errors.hasErrors())
             throw new ValidationException(RestExceptionHandler.VALIDATION_EXCEPTION_MSG + RestExceptionHandler.getValidationErrorString(errors));
@@ -60,7 +60,7 @@ public class IconServiceIImpl implements IconService {
     {
         return iconRepository.findAll()
                 .stream()
-                .map(iconMapper::toIconDTO)
+                .map(iconMapper::toDto)
                 .toList();
     }
 

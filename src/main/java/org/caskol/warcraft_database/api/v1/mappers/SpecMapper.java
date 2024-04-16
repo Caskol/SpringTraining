@@ -1,25 +1,49 @@
 package org.caskol.warcraft_database.api.v1.mappers;
 
-import org.caskol.warcraft_database.api.v1.dto.SpecDTO;
-import org.caskol.warcraft_database.api.v1.models.Spec;
+import org.caskol.warcraft_database.api.v1.dto.*;
+import org.caskol.warcraft_database.api.v1.models.*;
 import org.mapstruct.*;
 
-@Mapper(componentModel = "spring",
-        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-uses = {StatWithoutListsMapper.class, WarcraftClassWithoutListsMapper.class, RoleWithoutListsMapper.class})
+import java.util.List;
+
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING)
 public interface SpecMapper {
-    @Named("AllSpecDataToDTO")
-    @Mapping(target = "stats", qualifiedByName = "ListOfBasicStatDTOData")
-    @Mapping(target = "warcraftClass", qualifiedByName = "WarcraftClassDTODataWithoutLists")
-    @Mapping(target = "role", qualifiedByName = "RoleDTODataWithoutLists")
-    SpecDTO allDataToSpecDTO(Spec spec);
-
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "stats", qualifiedByName = "ListOfBasicStatData")
-    @Mapping(target = "warcraftClass", qualifiedByName = "WarcraftClassDataWithoutLists")
-    @Mapping(target = "role", qualifiedByName = "RoleDataWithoutLists")
-    Spec toSpec(SpecDTO specDTO);
+    Spec toEntity(SpecDTO specDTO);
 
-    @Mapping(target = "id", ignore = true)
-    void updateSpecFromDTO(SpecDTO specDTO, @MappingTarget Spec spec);
+    SpecDTO toDto(Spec spec);
+
+    @Mapping(target = "specs", ignore = true)
+    RoleDTO toRoleDto(Role role);
+    @BeanMapping(ignoreByDefault = true)
+    @Mapping(target = "id", ignore = false)
+    Role toRole(RoleDTO roleDTO);
+    @Named("StatWithoutLists")
+    @BeanMapping(ignoreByDefault = true)
+    @Mapping(target = "id", ignore = false)
+    Stat toStat(StatDTO statDTO);
+    @Named("StatDTOWithoutLists")
+    @Mapping(target = "specs", ignore = true)
+    StatDTO toStatDto(Stat stat);
+    @IterableMapping(qualifiedByName = "StatWithoutLists")
+    List<Stat> toStatList(List<StatDTO> statDTOList);
+    @IterableMapping(qualifiedByName = "StatDTOWithoutLists")
+    List<StatDTO> toStatDto(List<Stat> statList);
+
+    @BeanMapping(ignoreByDefault = true)
+    @Mapping(target = "id", ignore = false)
+    Icon toIcon(IconDTO iconDTO);
+    IconDTO toIconDto(Icon icon);
+
+
+    @BeanMapping(ignoreByDefault = true)
+    @Mapping(target = "id", ignore = false)
+    WarcraftClass toWarcraftClass(WarcraftClassDTO warcraftClassDTO);
+
+    @Mapping(target = "specs", ignore = true)
+    @Mapping(target = "classResources", ignore = true)
+    WarcraftClassDTO toWarcraftClassDto(WarcraftClass warcraftClass);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    Spec partialUpdate(SpecDTO specDTO, @MappingTarget Spec spec);
 }

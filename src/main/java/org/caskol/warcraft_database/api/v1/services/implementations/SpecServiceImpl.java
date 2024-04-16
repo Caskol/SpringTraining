@@ -5,15 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.caskol.warcraft_database.api.v1.dto.SpecDTO;
 import org.caskol.warcraft_database.api.v1.exceptions.NoSuchElementFoundException;
 import org.caskol.warcraft_database.api.v1.mappers.SpecMapper;
-import org.caskol.warcraft_database.api.v1.mappers.SpecWithoutListsMapper;
-import org.caskol.warcraft_database.api.v1.models.Icon;
-import org.caskol.warcraft_database.api.v1.models.Role;
 import org.caskol.warcraft_database.api.v1.models.Spec;
-import org.caskol.warcraft_database.api.v1.models.WarcraftClass;
-import org.caskol.warcraft_database.api.v1.repositories.IconRepository;
-import org.caskol.warcraft_database.api.v1.repositories.RoleRepository;
 import org.caskol.warcraft_database.api.v1.repositories.SpecRepository;
-import org.caskol.warcraft_database.api.v1.repositories.WarcraftClassRepository;
 import org.caskol.warcraft_database.api.v1.services.SpecService;
 import org.caskol.warcraft_database.utils.RestExceptionHandler;
 import org.springframework.stereotype.Service;
@@ -30,25 +23,21 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class SpecServiceImpl implements SpecService {
     private final SpecRepository specRepository;
-    private final IconRepository iconRepository;
-    private final WarcraftClassRepository warcraftClassRepository;
-    private final RoleRepository roleRepository;
     private final SpecMapper specMapper;
-    private final SpecWithoutListsMapper specWithoutListsMapper;
     private final Validator validator;
     public SpecDTO getById(int id)
     {
         Optional<Spec> spec= specRepository.findById(id);
         if (!spec.isPresent())
             throw new NoSuchElementFoundException(Spec.class.getSimpleName()+" with id="+id+" was not found");
-        return specMapper.allDataToSpecDTO(spec.get());
+        return specMapper.toDto(spec.get());
     }
     @Transactional(readOnly = false)
     public void update(SpecDTO specDTO) {
         Optional<Spec> specFromDatabase = specRepository.findById(specDTO.getId());
         if (!specFromDatabase.isPresent())
             throw new NoSuchElementFoundException(Spec.class.getSimpleName()+" with id="+specDTO.getId()+" was not found.");
-        specMapper.updateSpecFromDTO(specDTO,specFromDatabase.get());
+        specMapper.partialUpdate(specDTO,specFromDatabase.get());
         Errors errors = validator.validateObject(specFromDatabase.get());
         if (errors.hasErrors())
             throw new ValidationException(RestExceptionHandler.VALIDATION_EXCEPTION_MSG+RestExceptionHandler.getValidationErrorString(errors));
@@ -56,17 +45,9 @@ public class SpecServiceImpl implements SpecService {
     }
     @Transactional(readOnly = false)
     public SpecDTO create(SpecDTO specDTO) {
-        Spec newSpec = specMapper.toSpec(specDTO);
-        Optional<Icon> icon = iconRepository.findById(newSpec.getIcon().getId());
-        Optional<Role> role = roleRepository.findById(newSpec.getRole().getId());
-        Optional<WarcraftClass> warcraftClass = warcraftClassRepository.findById(newSpec.getWarcraftClass().getId());
-        //Role role = newSpec.getRole();
-        //WarcraftClass warcraftClass = newSpec.getWarcraftClass();
-        newSpec.setWarcraftClass(warcraftClass.get());
-        newSpec.setRole(role.get());
-        newSpec.setIcon(icon.get());
+        Spec newSpec = specMapper.toEntity(specDTO);
         specRepository.save(newSpec);
-        return specMapper.allDataToSpecDTO(newSpec);
+        return specMapper.toDto(newSpec);
     }
     @Transactional(readOnly = false)
     public void delete(int id)
@@ -77,7 +58,7 @@ public class SpecServiceImpl implements SpecService {
     {
         return specRepository.findAll()
                 .stream()
-                .map(specWithoutListsMapper::dataWithoutListToSpecDTO)
+                .map(specMapper::toDto)
                 .collect(Collectors.toList());
     }
 }

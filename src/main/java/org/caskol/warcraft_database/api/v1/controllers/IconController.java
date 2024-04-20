@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.caskol.warcraft_database.api.v1.dto.IconDTO;
 import org.caskol.warcraft_database.api.v1.services.IconService;
 import org.caskol.warcraft_database.utils.RestExceptionHandler;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -21,8 +22,13 @@ public class IconController {
     private final IconService iconService;
 
     @GetMapping
-    public ResponseEntity<List<IconDTO>> getIcons() {
-        return ResponseEntity.ok(iconService.getAll());
+    public ResponseEntity<List<IconDTO>> getIcons(@RequestParam(value = "page", required = false) Integer page,
+                                                  @RequestParam(value = "pagesize", required = false) Integer pageSize) {
+        if ((page==null || page<0) || (pageSize==null || pageSize<2)){
+            page=0;
+            pageSize=10000;
+        }
+        return ResponseEntity.ok(iconService.getAll(PageRequest.of(page,pageSize)));
     }
 
     @GetMapping("/{id}")

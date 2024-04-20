@@ -2,14 +2,14 @@ package org.caskol.warcraft_database.api.v1.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -31,13 +31,21 @@ public class WarcraftClass{
     private String description;
 
     @OneToOne
-    @NotNull
     @JoinColumn(name = "icon_id", referencedColumnName = "id")
     private Icon icon;
-    @NotNull
     @ManyToMany(mappedBy = "warcraftClassList")
-    private List<ClassResource> classResourceList;
-    @NotNull
+    private Set<ClassResource> classResourceList;
     @OneToMany(mappedBy = "warcraftClass", orphanRemoval = true)
-    private List<Spec> specs;
+    private Set<Spec> specs;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof WarcraftClass that)) return false;
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(description, that.description);
+    }
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, description);
+    }
 }

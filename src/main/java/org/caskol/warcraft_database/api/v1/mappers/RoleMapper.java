@@ -7,40 +7,38 @@ import org.caskol.warcraft_database.api.v1.models.Icon;
 import org.caskol.warcraft_database.api.v1.models.Role;
 import org.caskol.warcraft_database.api.v1.models.Spec;
 import org.mapstruct.*;
+import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.util.Set;
 
-@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING)
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE,
+        componentModel = MappingConstants.ComponentModel.SPRING)
+@Component
 public interface RoleMapper {
 
-    @Mapping(target = "id", ignore = true)
+    @BeanMapping(ignoreByDefault = true)
+    @Mapping(target = "name", ignore = false)
     Role toEntity(RoleDTO roleDTO);
 
-    @AfterMapping
-    default void linkSpecs(@MappingTarget Role role) {
-        role.getSpecs().forEach(spec -> spec.setRole(role));
-    }
+    @Named("AllDataToDTO")
+    RoleDTO allDataToDto(Role role);
 
-    RoleDTO toDto(Role role);
+    @Named("DataWithoutList")
+    @Mapping(target = "specs", ignore = true)
+    RoleDTO basicDataToDto(Role role);
 
     IconDTO toIconDto(Icon icon);
-    @BeanMapping(ignoreByDefault = true)
-    @Mapping(target = "id", ignore = false)
-    Icon toIcon(IconDTO iconDTO);
     @IterableMapping(qualifiedByName = "SpecDTOWithoutLists")
-    List<SpecDTO> toSpecDtoList(List<Spec> specList);
-    @IterableMapping(qualifiedByName = "SpecWithoutLists")
-    List<Spec> toSpecList(List<SpecDTO> specDTOList);
+    Set<SpecDTO> toSpecDtoList(Set<Spec> specList);
     @Named("SpecDTOWithoutLists")
     @Mapping(target = "warcraftClass", ignore = true)
     @Mapping(target="stats", ignore = true)
     @Mapping(target = "role", ignore = true)
     SpecDTO toSpecDTO(Spec spec);
-    @Named("SpecWithoutLists")
-    @BeanMapping(ignoreByDefault = true)
-    @Mapping(target = "id", ignore = false)
-    Spec toSpec(SpecDTO specDTO);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "icon", ignore = true)
+    @Mapping(target = "specs", ignore = true)
+    @Mapping(target = "id", ignore = true)
     Role partialUpdate(RoleDTO roleDTO, @MappingTarget Role role);
 }

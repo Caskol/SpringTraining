@@ -1,6 +1,7 @@
 package org.caskol.warcraft_database.api.v1.services;
 
 import org.caskol.warcraft_database.api.v1.dto.IconDTO;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -9,5 +10,5 @@ public interface IconService {
     public void update(IconDTO iconDTO);
     public IconDTO create(IconDTO iconDTO);
     public void delete(int id);
-    public List<IconDTO> getAll();
+    public List<IconDTO> getAll(Pageable pageable);
 }

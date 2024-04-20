@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.caskol.warcraft_database.api.v1.dto.SpecDTO;
 import org.caskol.warcraft_database.api.v1.services.SpecService;
 import org.caskol.warcraft_database.utils.RestExceptionHandler;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -19,8 +20,13 @@ import java.util.List;
 public class SpecController {
     private final SpecService specService;
     @GetMapping
-    public ResponseEntity<List<SpecDTO>> getAllSpecs(){
-        return ResponseEntity.ok(specService.getAll());
+    public ResponseEntity<List<SpecDTO>> getSpecs(@RequestParam(value = "page", required = false) Integer page,
+                                                  @RequestParam(value = "pagesize", required = false) Integer pageSize){
+        if ((page==null || page<0) || (pageSize==null || pageSize<2)){
+            page=0;
+            pageSize=10000;
+        }
+        return ResponseEntity.ok(specService.getAll(PageRequest.of(page,pageSize)));
     }
     @GetMapping("/{id}")
     public ResponseEntity<SpecDTO> getSpecWithId(@PathVariable("id") int id){

@@ -8,7 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -30,11 +31,11 @@ public class Spec{
     @Column(name = "description")
     private String description;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE},fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id", referencedColumnName = "id")
     private Role role;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "class_id", referencedColumnName = "id")
     private WarcraftClass warcraftClass;
 
@@ -42,12 +43,24 @@ public class Spec{
     @JoinColumn(name = "icon_id", referencedColumnName = "id")
     private Icon icon;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
             name = "specs_stats",
             joinColumns = @JoinColumn(name = "spec_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "stat_id", referencedColumnName = "id"),
             uniqueConstraints = @UniqueConstraint(columnNames = {"spec_id", "stat_id"})
     )
-    private List<Stat> stats;
+    private Set<Stat> stats;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Spec spec)) return false;
+        return Objects.equals(id, spec.id) && Objects.equals(name, spec.name) && Objects.equals(description, spec.description);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, description);
+    }
 }

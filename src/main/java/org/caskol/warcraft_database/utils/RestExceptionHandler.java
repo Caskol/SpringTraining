@@ -1,7 +1,7 @@
 package org.caskol.warcraft_database.utils;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ValidationException;
-import org.caskol.warcraft_database.api.v1.exceptions.NoSuchElementFoundException;
 import org.hibernate.TransientObjectException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,14 +16,15 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     public static final String VALIDATION_EXCEPTION_MSG = "Поля объекта были неверно заполнены. Дополнительная информация: ";
-    public static final String REFERENCE_ID_NOT_FOUND = "Чтобы изменить связь с этим объектом необходимо указывать верный ID этого объекта";
-    @ExceptionHandler(NoSuchElementFoundException.class)
-    private ResponseEntity<String> handleNoSuchElement(NoSuchElementFoundException e) {
-        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-    }
+    public static final String REFERENCE_ID_NOT_FOUND = "Чтобы задать связь с этим объектом необходимо указывать верный ID этого объекта";
+
     @ExceptionHandler(ValidationException.class)
     private ResponseEntity<String> handleValidationException(ValidationException e){
         return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(EntityNotFoundException.class)
+    private ResponseEntity<String> handleValidationException(EntityNotFoundException e){
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
     }
     @ExceptionHandler(TransientObjectException.class)
     private ResponseEntity<String> handleTransientException(TransientObjectException e){

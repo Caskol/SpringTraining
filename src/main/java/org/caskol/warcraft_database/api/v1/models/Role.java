@@ -8,7 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -27,10 +28,22 @@ public class Role{
     @Size(min = 4, message = "Это поле должно содержать как минимум 4 символа")
     private String name;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "icon_id", referencedColumnName = "id")
     private Icon icon;
 
-    @OneToMany(mappedBy = "role", orphanRemoval = true)
-    private List<Spec> specs;
+    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
+    private Set<Spec> specs;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Role role)) return false;
+        return Objects.equals(id, role.id) && Objects.equals(name, role.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name);
+    }
 }

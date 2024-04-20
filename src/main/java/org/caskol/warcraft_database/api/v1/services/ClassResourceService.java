@@ -1,6 +1,7 @@
 package org.caskol.warcraft_database.api.v1.services;
 
 import org.caskol.warcraft_database.api.v1.dto.ClassResourceDTO;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -9,5 +10,5 @@ public interface ClassResourceService {
     public void update(ClassResourceDTO classResourceDTO);
     public ClassResourceDTO create(ClassResourceDTO classResourceDTO);
     public void delete(int id);
-    public List<ClassResourceDTO> getAll();
+    public List<ClassResourceDTO> getAll(Pageable pageable);
 }

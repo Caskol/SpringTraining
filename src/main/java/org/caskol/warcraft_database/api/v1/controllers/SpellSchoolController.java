@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.caskol.warcraft_database.api.v1.dto.SpellSchoolDTO;
 import org.caskol.warcraft_database.api.v1.services.SpellSchoolService;
 import org.caskol.warcraft_database.utils.RestExceptionHandler;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -20,8 +21,13 @@ import java.util.List;
 public class SpellSchoolController {
     private final SpellSchoolService spellSchoolService;
     @GetMapping
-    public ResponseEntity<List<SpellSchoolDTO>> getSpellSchools() {
-        return ResponseEntity.ok(spellSchoolService.getAll());
+    public ResponseEntity<List<SpellSchoolDTO>> getSpellSchools(@RequestParam(value = "page", required = false) Integer page,
+                                                                @RequestParam(value = "pagesize", required = false) Integer pageSize) {
+        if ((page==null || page<0) || (pageSize==null || pageSize<2)){
+            page=0;
+            pageSize=10000;
+        }
+        return ResponseEntity.ok(spellSchoolService.getAll(PageRequest.of(page,pageSize)));
     }
     @GetMapping("/{id}")
     public ResponseEntity<SpellSchoolDTO> getSpellSchoolWithId(@PathVariable("id") int id) {

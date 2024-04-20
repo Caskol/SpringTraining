@@ -13,5 +13,6 @@ public interface IconMapper {
     IconDTO toDto(Icon icon);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "id", ignore = true)
     Icon partialUpdate(IconDTO iconDTO, @MappingTarget Icon icon);
 }

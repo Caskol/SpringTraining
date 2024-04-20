@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.caskol.warcraft_database.api.v1.dto.StatDTO;
 import org.caskol.warcraft_database.api.v1.services.StatService;
 import org.caskol.warcraft_database.utils.RestExceptionHandler;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -19,8 +20,13 @@ import java.util.List;
 public class StatController {
     private final StatService statService;
     @GetMapping
-    public ResponseEntity<List<StatDTO>> getAllStats(){
-        return ResponseEntity.ok(statService.getAll());
+    public ResponseEntity<List<StatDTO>> getStats(@RequestParam(value = "page", required = false) Integer page,
+                                                  @RequestParam(value = "pagesize", required = false) Integer pageSize){
+        if ((page==null || page<0) || (pageSize==null || pageSize<2)){
+            page=0;
+            pageSize=10000;
+        }
+        return ResponseEntity.ok(statService.getAll(PageRequest.of(page,pageSize)));
     }
     @GetMapping("/{id}")
     public ResponseEntity<StatDTO> getStatWithId(@PathVariable("id") int id){

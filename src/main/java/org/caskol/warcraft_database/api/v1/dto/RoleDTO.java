@@ -9,8 +9,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -22,7 +22,7 @@ public class RoleDTO {
     @Size(min = 4, message = "Это поле должно содержать как минимум 4 символа")
     private String name;
     private IconDTO icon;
-    private Set<SpecDTO> specs;
+    private List<SpecDTO> specs;
 
     @Override
     public boolean equals(Object o) {

@@ -30,7 +30,7 @@ public class WarcraftClass{
     @Column(name = "description")
     private String description;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "icon_id", referencedColumnName = "id")
     private Icon icon;
     @ManyToMany(mappedBy = "warcraftClassList")

@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import java.util.Objects;
 import java.util.Set;
@@ -43,13 +45,15 @@ public class Spec{
     @JoinColumn(name = "icon_id", referencedColumnName = "id")
     private Icon icon;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH},
+    fetch = FetchType.LAZY)
     @JoinTable(
             name = "specs_stats",
             joinColumns = @JoinColumn(name = "spec_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "stat_id", referencedColumnName = "id"),
             uniqueConstraints = @UniqueConstraint(columnNames = {"spec_id", "stat_id"})
     )
+    @Fetch(FetchMode.SUBSELECT)
     private Set<Stat> stats;
 
     @Override

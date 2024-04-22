@@ -3,12 +3,10 @@ package org.caskol.warcraft_database.api.v1.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -27,12 +25,24 @@ public class ClassResource {
     @Size(min = 4, message = "Это поле должно содержать как минимум 4 символа")
     private String name;
 
-    @ManyToMany(fetch=FetchType.LAZY)
+    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.LAZY)
     @JoinTable(
             name = "classresources_class",
             joinColumns = @JoinColumn(name = "class_resource_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "class_id", referencedColumnName = "id"),
             uniqueConstraints = @UniqueConstraint(columnNames = {"class_resource_id", "class_id"})
     )
-    private List<WarcraftClass> warcraftClassList;
+    private Set<WarcraftClass> warcraftClassList;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ClassResource that)) return false;
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name);
+    }
 }

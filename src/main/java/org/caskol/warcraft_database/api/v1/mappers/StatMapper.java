@@ -11,23 +11,25 @@ import java.util.List;
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING)
 public interface StatMapper {
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "specs", ignore = true)
     Stat toEntity(StatDTO statDTO);
 
-    StatDTO toDto(Stat stat);
+    @Named("BasicDataToDTO")
+    @Mapping(target = "specs", ignore = true)
+    StatDTO basicDataToDto(Stat stat);
+    @Named("AllDataToDTO")
+    StatDTO allDataToDto(Stat stat);
+
     @Named("SpecDTOWithoutLists")
     @Mapping(target = "role", ignore = true)
     @Mapping(target = "stats", ignore = true)
     @Mapping(target = "warcraftClass", ignore = true)
     SpecDTO toSpecDto(Spec spec);
-    @Named("SpecWithoutLists")
-    @BeanMapping(ignoreByDefault = true)
-    @Mapping(target = "id", ignore = false)
-    Spec toSpec(SpecDTO specDTO);
     @IterableMapping(qualifiedByName = "SpecDTOWithoutLists")
     List<SpecDTO> toSpecDtoList(List<Spec> specList);
-    @IterableMapping(qualifiedByName = "SpecWithoutLists")
-    List<Spec> toSpecList(List<SpecDTO> specDTOList);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "specs", ignore = true)
     Stat partialUpdate(StatDTO statDTO, @MappingTarget Stat stat);
 }

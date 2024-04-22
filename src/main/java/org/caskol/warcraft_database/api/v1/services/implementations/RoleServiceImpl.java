@@ -1,8 +1,8 @@
 package org.caskol.warcraft_database.api.v1.services.implementations;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.caskol.warcraft_database.api.v1.dto.RoleDTO;
+import org.caskol.warcraft_database.api.v1.dto.SpecDTO;
 import org.caskol.warcraft_database.api.v1.mappers.RoleMapper;
 import org.caskol.warcraft_database.api.v1.models.Icon;
 import org.caskol.warcraft_database.api.v1.models.Role;
@@ -16,9 +16,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -30,22 +30,16 @@ public class RoleServiceImpl implements RoleService {
     private final SpecRepository specRepository;
     private final RoleMapper roleMapper;
     @Override
-    public RoleDTO getById(int id)
-    {
-        Optional<Role> role= roleRepository.findById(id);
-        if (!role.isPresent())
-            throw new EntityNotFoundException(Role.class.getSimpleName()+" with id="+id+" was not found");
-        return roleMapper.allDataToDto(role.get());
+    public RoleDTO getById(int id) {
+        return roleMapper.allDataToDto(RepositoryUtils.getOneFromRepository(roleRepository,id,Role.class));
     }
     @Override
     @Transactional(readOnly = false)
     public void update(RoleDTO roleDTO) {
-        Optional<Role> roleFromDatabase = roleRepository.findById(roleDTO.getId());
-        if (!roleFromDatabase.isPresent())
-            throw new EntityNotFoundException(Role.class.getSimpleName()+" with id="+roleDTO.getId()+" was not found.");
-        roleMapper.partialUpdate(roleDTO,roleFromDatabase.get());
-        establishRelation(roleDTO,roleFromDatabase.get());
-        roleRepository.save(roleFromDatabase.get());
+        Role role = RepositoryUtils.getOneFromRepository(roleRepository,roleDTO.getId(),Role.class);
+        roleMapper.partialUpdate(roleDTO,role);
+        establishRelation(roleDTO,role);
+        roleRepository.save(role);
     }
     @Override
     @Transactional(readOnly = false)
@@ -68,20 +62,24 @@ public class RoleServiceImpl implements RoleService {
                 .map(roleMapper::basicDataToDto)
                 .collect(Collectors.toList());
     }
-    public void establishRelation(RoleDTO roleDTO, Role role){
+    private void establishRelation(RoleDTO roleDTO, Role role){
+        //Bidirectional OneToMany
         if (roleDTO.getSpecs()!=null){
             if (role.getSpecs()==null)
                 role.setSpecs(new LinkedHashSet<>());
             role.getSpecs().forEach(spec->spec.setRole(null)); //убираем связи для всех элементов списка
 
-            role.setSpecs(roleDTO.getSpecs().stream()
-                    .map((specDTO)-> RepositoryUtils.getFromRepository(specRepository,specDTO.getId(),Spec.class))
-                    .peek(spec->spec.setRole(role))
-                    .collect(Collectors.toSet())
-            );
+            var specsIdFromDto = roleDTO.getSpecs().stream().map(SpecDTO::getId).collect(Collectors.toSet());
+            Collection<Spec> specsFromDatabase = specRepository.findAllById(specsIdFromDto);
+            var idsFromDatabase = specsFromDatabase.stream().map(Spec::getId).collect(Collectors.toSet());
+            if (RepositoryUtils.isClientIdsValid(idsFromDatabase, specsIdFromDto,Spec.class)){
+                specsFromDatabase.forEach(spec->spec.setRole(role));
+                role.setSpecs(new LinkedHashSet<>(specsFromDatabase));
+            }
         }
+        //Unidirectional OneToOne
         if (roleDTO.getIcon()!=null){
-            role.setIcon(RepositoryUtils.getFromRepository(iconRepository,roleDTO.getIcon().getId(), Icon.class));
+            role.setIcon(RepositoryUtils.getOneFromRepository(iconRepository,roleDTO.getIcon().getId(), Icon.class));
         }
     }
 }

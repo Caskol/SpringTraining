@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -28,5 +28,5 @@ public class Stat{
     private String name;
 
     @ManyToMany(mappedBy = "stats")
-    private List<Spec> specs;
+    private Set<Spec> specs;
 }

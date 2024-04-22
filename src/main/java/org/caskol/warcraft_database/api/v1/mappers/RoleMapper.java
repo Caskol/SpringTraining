@@ -28,9 +28,7 @@ public interface RoleMapper {
     RoleDTO basicDataToDto(Role role);
 
     IconDTO toIconDto(Icon icon);
-    @IterableMapping(qualifiedByName = "SpecDTOWithoutLists")
     Set<SpecDTO> toSpecDtoList(Set<Spec> specList);
-    @Named("SpecDTOWithoutLists")
     @Mapping(target = "warcraftClass", ignore = true)
     @Mapping(target="stats", ignore = true)
     @Mapping(target = "role", ignore = true)

@@ -8,8 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -22,8 +22,8 @@ public class WarcraftClassDTO{
     private String name;
     private String description;
     private IconDTO icon;
-    private Set<ClassResourceDTO> classResources;
-    private Set<SpecDTO> specs;
+    private List<ClassResourceDTO> classResources;
+    private List<SpecDTO> specs;
 
     @Override
     public boolean equals(Object o) {

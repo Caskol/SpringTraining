@@ -28,7 +28,7 @@ public class Role{
     @Size(min = 4, message = "Это поле должно содержать как минимум 4 символа")
     private String name;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "icon_id", referencedColumnName = "id")
     private Icon icon;
 

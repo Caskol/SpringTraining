@@ -15,46 +15,34 @@ import java.util.List;
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING)
 public interface WarcraftClassMapper {
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "specs", ignore = true)
+    @Mapping(target = "classResourceList", ignore = true)
+    @Mapping(target = "icon", ignore = true)
     WarcraftClass toEntity(WarcraftClassDTO warcraftClassDTO);
-
-    @AfterMapping
-    default void linkSpecs(@MappingTarget WarcraftClass warcraftClass) {
-        warcraftClass.getSpecs().forEach(spec -> spec.setWarcraftClass(warcraftClass));
-    }
-
-    WarcraftClassDTO toDto(WarcraftClass warcraftClass);
+    @Named("AllDataToDTO")
+    WarcraftClassDTO allDataToDto(WarcraftClass warcraftClass);
+    @Named("BasicDataToDTO")
+    @Mapping(target = "specs", ignore = true)
+    @Mapping(target = "classResources", ignore = true)
+    WarcraftClassDTO basicDataToDto(WarcraftClass warcraftClass);
 
     IconDTO toIconDto(Icon icon);
-    @BeanMapping(ignoreByDefault = true)
-    @Mapping(target = "id", ignore = false)
-    Icon toIcon(IconDTO iconDTO);
-    @Named("ClassResourceDTOWithoutLists")
+
     @Mapping(target = "classes", ignore = true)
     ClassResourceDTO toClassResourceDto(ClassResource classResource);
-    @Named("ClassResourceWithoutLists")
-    @BeanMapping(ignoreByDefault = true)
-    @Mapping(target = "id", ignore = false)
-    ClassResource toClassResource(ClassResourceDTO classResourceDTO);
 
-    @IterableMapping(qualifiedByName = "ClassResourceDTOWithoutLists")
     List<ClassResourceDTO> toClassResourceDtoList(List<ClassResource> classResourceList);
-    @IterableMapping(qualifiedByName = "ClassResourceWithoutLists")
-    List<ClassResource> toClassResourceList(List<ClassResourceDTO> classResourceDTOList);
 
-    @Named("SpecWithoutLists")
-    @BeanMapping(ignoreByDefault = true)
-    @Mapping(target = "id", ignore = false)
-    Spec toSpec(SpecDTO specDTO);
-    @Named("SpecDTOWithoutLists")
     @Mapping(target = "warcraftClass", ignore = true)
     @Mapping(target = "stats", ignore = true)
     @Mapping(target = "role", ignore = true)
     SpecDTO toSpecDto(Spec spec);
-    @IterableMapping(qualifiedByName = "SpecDTOWithoutLists")
+
     List<SpecDTO> toSpecDtoList(List<Spec> specList);
-    @IterableMapping(qualifiedByName = "SpecWithoutLists")
-    List<Spec> toSpecList(List<SpecDTO> specDTOList);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "classResourceList", ignore = true)
+    @Mapping(target = "specs", ignore = true)
+    @Mapping(target = "icon", ignore = true)
     WarcraftClass partialUpdate(WarcraftClassDTO warcraftClassDTO, @MappingTarget WarcraftClass warcraftClass);
 }

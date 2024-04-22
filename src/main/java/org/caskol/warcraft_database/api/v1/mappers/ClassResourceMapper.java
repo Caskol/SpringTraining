@@ -11,23 +11,21 @@ import java.util.List;
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ClassResourceMapper {
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "warcraftClassList", ignore = true)
     ClassResource toEntity(ClassResourceDTO classResourceDTO);
-
-    ClassResourceDTO toDto(ClassResource classResource);
-    @IterableMapping(qualifiedByName = "WarcraftClassDTOWithoutLists")
+    @Named("AllDataToDTO")
+    @Mapping(source = "warcraftClassList", target = "classes")
+    ClassResourceDTO allDataToDto(ClassResource classResource);
+    @Named("BasicDataToDTO")
+    @Mapping(target = "classes", source = "warcraftClassList", ignore = true)
+    ClassResourceDTO basicDataToDto(ClassResource classResource);
     List<WarcraftClassDTO> toWarcraftClassDTOList(List<WarcraftClass> warcraftClasses);
-    @IterableMapping(qualifiedByName = "WarcraftClassWithoutLists")
-    List<WarcraftClass> toWarcraftClassList(List<WarcraftClassDTO> warcraftClassDTOList);
-
-    @Named("WarcraftClassWithoutLists")
-    @BeanMapping(ignoreByDefault = true)
-    @Mapping(target = "id", ignore = false)
-    WarcraftClass toWarcraftClass(WarcraftClassDTO warcraftClassDTO);
-    @Named("WarcraftClassDTOWithoutLists")
     @Mapping(target = "specs", ignore = true)
     @Mapping(target = "classResources", ignore = true)
     WarcraftClassDTO toWarcraftClassDTO(WarcraftClass warcraftClass);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "warcraftClassList",source = "classes",ignore = true)
     ClassResource partialUpdate(ClassResourceDTO classResourceDTO, @MappingTarget ClassResource classResource);
 }

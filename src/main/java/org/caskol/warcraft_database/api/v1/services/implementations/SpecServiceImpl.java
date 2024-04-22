@@ -1,19 +1,20 @@
 package org.caskol.warcraft_database.api.v1.services.implementations;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.caskol.warcraft_database.api.v1.dto.SpecDTO;
+import org.caskol.warcraft_database.api.v1.dto.StatDTO;
 import org.caskol.warcraft_database.api.v1.mappers.SpecMapper;
-import org.caskol.warcraft_database.api.v1.models.Spec;
-import org.caskol.warcraft_database.api.v1.repositories.SpecRepository;
+import org.caskol.warcraft_database.api.v1.models.*;
+import org.caskol.warcraft_database.api.v1.repositories.*;
 import org.caskol.warcraft_database.api.v1.services.SpecService;
+import org.caskol.warcraft_database.utils.RepositoryUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.Validator;
 
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -21,34 +22,31 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class SpecServiceImpl implements SpecService {
     private final SpecRepository specRepository;
+    private final IconRepository iconRepository;
+    private final WarcraftClassRepository warcraftClassRepository;
+    private final RoleRepository roleRepository;
     private final SpecMapper specMapper;
-    private final Validator validator;
+    private final StatRepository statRepository;
+
     @Override
-    public SpecDTO getById(int id)
-    {
-        Optional<Spec> spec= specRepository.findById(id);
-        if (!spec.isPresent())
-            throw new EntityNotFoundException(Spec.class.getSimpleName()+" with id="+id+" was not found");
-        return specMapper.toDto(spec.get());
+    public SpecDTO getById(int id) {
+         return specMapper.allDataToDto(RepositoryUtils.getOneFromRepository(specRepository,id,Spec.class));
     }
     @Override
     @Transactional(readOnly = false)
     public void update(SpecDTO specDTO) {
-        Optional<Spec> specFromDatabase = specRepository.findById(specDTO.getId());
-        if (!specFromDatabase.isPresent())
-            throw new EntityNotFoundException(Spec.class.getSimpleName()+" with id="+specDTO.getId()+" was not found.");
-        specMapper.partialUpdate(specDTO,specFromDatabase.get());
-//        Errors errors = validator.validateObject(specFromDatabase.get());
-//        if (errors.hasErrors())
-//            throw new ValidationException(RestExceptionHandler.VALIDATION_EXCEPTION_MSG+RestExceptionHandler.getValidationErrorString(errors));
-        specRepository.save(specFromDatabase.get());
+        Spec spec = RepositoryUtils.getOneFromRepository(specRepository,specDTO.getId(), Spec.class);
+        specMapper.partialUpdate(specDTO,spec);
+        establishRelation(specDTO,spec);
+        specRepository.save(spec);
     }
     @Override
     @Transactional(readOnly = false)
     public SpecDTO create(SpecDTO specDTO) {
         Spec newSpec = specMapper.toEntity(specDTO);
+        establishRelation(specDTO,newSpec);
         specRepository.save(newSpec);
-        return specMapper.toDto(newSpec);
+        return specMapper.allDataToDto(newSpec);
     }
     @Override
     @Transactional(readOnly = false)
@@ -59,9 +57,50 @@ public class SpecServiceImpl implements SpecService {
     @Override
     public List<SpecDTO> getAll(Pageable pageable)
     {
-        return specRepository.findAll(pageable)
+        return specRepository.findAllFetchWithoutList(pageable)
                 .stream()
-                .map(specMapper::toDto)
+                .map(specMapper::basicDataToDto)
                 .collect(Collectors.toList());
+    }
+
+    private void establishRelation(SpecDTO specDTO, Spec spec){
+        //Unidirectional OneToOne
+        if (specDTO.getIcon()!=null){
+            spec.setIcon(RepositoryUtils.getOneFromRepository(iconRepository,specDTO.getIcon().getId(), Icon.class));
+        }
+        //Bidirectional OneToMany
+        if (specDTO.getRole()!=null){
+            if (spec.getRole()!=null && spec.getRole().getSpecs()!=null){ //если роль у спека уже есть
+                spec.getRole().getSpecs().remove(spec); //удаляем предыдущие связи
+            }
+            Role role = RepositoryUtils.getOneFromRepository(roleRepository,specDTO.getRole().getId(), Role.class);
+            if (role.getSpecs()==null)
+                role.setSpecs(new LinkedHashSet<>());
+            role.getSpecs().add(spec);
+            spec.setRole(role);
+        }
+        //Bidirectional OneToMany
+        if (specDTO.getWarcraftClass()!=null){
+            if (spec.getWarcraftClass()!=null && spec.getWarcraftClass().getSpecs()!=null){ //если роль у спека уже есть
+                spec.getWarcraftClass().getSpecs().remove(spec); //удаляем предыдущие связи
+            }
+            WarcraftClass warcraftClass = RepositoryUtils.getOneFromRepository(warcraftClassRepository,specDTO.getWarcraftClass().getId(), WarcraftClass.class);
+            if (warcraftClass.getSpecs()==null)
+                warcraftClass.setSpecs(new LinkedHashSet<>());
+            warcraftClass.getSpecs().add(spec);
+            spec.setWarcraftClass(warcraftClass);
+        }
+        //Bidirectional ManyToMany
+        if (specDTO.getStats()!=null){
+            var statIdsFromDto = specDTO.getStats().stream()
+                    .map(StatDTO::getId)
+                    .collect(Collectors.toSet());
+            Collection<Stat> stats = statRepository.findAllById(statIdsFromDto);
+            var idsFromDatabase = stats.stream()
+                    .map(Stat::getId)
+                    .collect(Collectors.toSet());
+            if (RepositoryUtils.isClientIdsValid(idsFromDatabase, statIdsFromDto, Stat.class))
+                spec.setStats(new LinkedHashSet<>(stats));
+        }
     }
 }

@@ -16,7 +16,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/class_resource")
+@RequestMapping("/api/v1/class_resources")
 public class ClassResourceController {
     private final ClassResourceService classResourceService;
     @GetMapping

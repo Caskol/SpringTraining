@@ -16,7 +16,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/stat")
+@RequestMapping("/api/v1/stats")
 public class StatController {
     private final StatService statService;
     @GetMapping

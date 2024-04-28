@@ -6,9 +6,9 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface IconService {
-    public IconDTO getById(int id);
-    public void update(IconDTO iconDTO);
-    public IconDTO create(IconDTO iconDTO);
-    public void delete(int id);
-    public List<IconDTO> getAll(Pageable pageable);
+    IconDTO getById(int id);
+    void update(IconDTO iconDTO);
+    IconDTO create(IconDTO iconDTO);
+    void delete(int id);
+    List<IconDTO> getAll(Pageable pageable);
 }

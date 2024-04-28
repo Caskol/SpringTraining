@@ -38,8 +38,8 @@ public class StatServiceImpl implements StatService {
     @Transactional(readOnly = false)
     public void update(StatDTO statDTO) {
         Stat stat = RepositoryUtils.getOneFromRepository(statRepository,statDTO.getId(),Stat.class);
-        statMapper.partialUpdate(statDTO,stat);
         establishConnection(statDTO,stat);
+        statMapper.partialUpdate(statDTO,stat);
         statRepository.save(stat);
     }
     @Override
@@ -74,8 +74,14 @@ public class StatServiceImpl implements StatService {
             var idsFromDatabase = specs.stream()
                     .map(Spec::getId)
                     .collect(Collectors.toSet());
-            if (RepositoryUtils.isClientIdsValid(idsFromDatabase, specIdsFromDto, Stat.class))
+            if (RepositoryUtils.isClientIdsValid(idsFromDatabase, specIdsFromDto, Stat.class)){
+                if (stat.getId()!=null){
+                    stat.getSpecs().forEach(spec->spec.getStats().remove(stat));
+                }
+                specs.forEach(spec->spec.getStats().add(stat));
                 stat.setSpecs(new LinkedHashSet<>(specs));
+            }
+
         }
     }
 }

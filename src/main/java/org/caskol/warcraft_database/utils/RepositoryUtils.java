@@ -26,7 +26,7 @@ public class RepositoryUtils {
         }
         StringBuilder sb = new StringBuilder();
         for (T i : idsFromClient){
-            sb.append("id="+i+" не был найден."+"\n");
+            sb.append("id=").append(i).append(" не был найден.").append("\n");
         }
         throw new ValidationException(RestExceptionHandler.VALIDATION_EXCEPTION_MSG+"Ошибки для объекта "+clazz.getSimpleName()+": "+ sb);
     }

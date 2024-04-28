@@ -43,8 +43,8 @@ public class ClassResourceServiceImpl implements ClassResourceService {
     @Transactional(readOnly = false)
     public void update(ClassResourceDTO classResourceDTO) {
         ClassResource classResource = RepositoryUtils.getOneFromRepository(classResourceRepository,classResourceDTO.getId(), ClassResource.class);
-        classResourceMapper.partialUpdate(classResourceDTO,classResource);
         establishConnection(classResourceDTO,classResource);
+        classResourceMapper.partialUpdate(classResourceDTO,classResource);
         classResourceRepository.save(classResource);
     }
     @Override
@@ -61,6 +61,7 @@ public class ClassResourceServiceImpl implements ClassResourceService {
     }
 
     private void establishConnection(ClassResourceDTO classResourceDTO, ClassResource classResource){
+        //Bidirectional ManyToMany
         if (classResourceDTO.getClasses()!=null){
             var classIdsFromDto = classResourceDTO.getClasses().stream()
                     .map(WarcraftClassDTO::getId)
@@ -69,8 +70,14 @@ public class ClassResourceServiceImpl implements ClassResourceService {
             var idsFromDatabase = classes.stream()
                     .map(WarcraftClass::getId)
                     .collect(Collectors.toSet());
-            if (RepositoryUtils.isClientIdsValid(idsFromDatabase, classIdsFromDto, WarcraftClass.class))
+            if (RepositoryUtils.isClientIdsValid(idsFromDatabase, classIdsFromDto, WarcraftClass.class)){
+                if (classResource.getId()!=null){
+                    //Удаляем старую информацию на обратной стороне связи
+                    classResource.getWarcraftClassList().forEach(warcraftClass->warcraftClass.getClassResourceList().remove(classResource));
+                }
+                classes.forEach(warcraftClass->warcraftClass.getClassResourceList().add(classResource));
                 classResource.setWarcraftClassList(new LinkedHashSet<>(classes));
+            }
         }
     }
 

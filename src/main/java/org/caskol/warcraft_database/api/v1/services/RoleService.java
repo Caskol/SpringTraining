@@ -6,9 +6,9 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface RoleService {
-    public RoleDTO getById(int id);
-    public void update(RoleDTO roleDTO);
-    public RoleDTO create(RoleDTO roleDTO);
-    public void delete(int id);
-    public List<RoleDTO> getAll(Pageable pageable);
+    RoleDTO getById(int id);
+    void update(RoleDTO roleDTO);
+    RoleDTO create(RoleDTO roleDTO);
+    void delete(int id);
+    List<RoleDTO> getAll(Pageable pageable);
 }

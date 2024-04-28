@@ -28,11 +28,11 @@ public class Role{
     @Size(min = 4, message = "Это поле должно содержать как минимум 4 символа")
     private String name;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne
     @JoinColumn(name = "icon_id", referencedColumnName = "id")
     private Icon icon;
 
-    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "role")
     private Set<Spec> specs;
 
     @Override

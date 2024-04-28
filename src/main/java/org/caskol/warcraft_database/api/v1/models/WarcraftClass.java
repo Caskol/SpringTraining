@@ -30,12 +30,14 @@ public class WarcraftClass{
     @Column(name = "description")
     private String description;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne
     @JoinColumn(name = "icon_id", referencedColumnName = "id")
     private Icon icon;
+
     @ManyToMany(mappedBy = "warcraftClassList")
     private Set<ClassResource> classResourceList;
-    @OneToMany(mappedBy = "warcraftClass", orphanRemoval = true)
+
+    @OneToMany(mappedBy = "warcraftClass")
     private Set<Spec> specs;
 
     @Override

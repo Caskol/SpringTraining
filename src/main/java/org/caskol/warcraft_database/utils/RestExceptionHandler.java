@@ -34,15 +34,15 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         StringBuilder errorsString = new StringBuilder();
         for (ObjectError error : bindingResult.getAllErrors()){
             if (error instanceof FieldError)
-                errorsString.append(((FieldError) error).getField()+" ");
-            errorsString.append(error.getDefaultMessage()+"\n");
+                errorsString.append(((FieldError) error).getField()).append(" ");
+            errorsString.append(error.getDefaultMessage()).append("\n");
         }
         return errorsString.toString();
     }
     public static String getValidationErrorString(Errors errors){
         StringBuilder errorString = new StringBuilder();
         for (FieldError fieldError: errors.getFieldErrors()){
-            errorString.append(fieldError.getField()+" " + fieldError.getDefaultMessage() + "\n");
+            errorString.append(fieldError.getField()).append(" ").append(fieldError.getDefaultMessage()).append("\n");
         }
         return errorString.toString();
     }

@@ -16,7 +16,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/spec")
+@RequestMapping("/api/v1/specs")
 public class SpecController {
     private final SpecService specService;
     @GetMapping

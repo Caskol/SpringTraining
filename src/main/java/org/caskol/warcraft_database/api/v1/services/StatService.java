@@ -6,9 +6,9 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface StatService {
-    public StatDTO getById(int id);
-    public void update(StatDTO statDTO);
-    public StatDTO create(StatDTO statDTO);
-    public void delete(int id);
-    public List<StatDTO> getAll(Pageable pageable);
+    StatDTO getById(int id);
+    void update(StatDTO statDTO);
+    StatDTO create(StatDTO statDTO);
+    void delete(int id);
+    List<StatDTO> getAll(Pageable pageable);
 }

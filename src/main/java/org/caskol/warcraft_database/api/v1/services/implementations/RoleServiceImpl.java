@@ -37,8 +37,8 @@ public class RoleServiceImpl implements RoleService {
     @Transactional(readOnly = false)
     public void update(RoleDTO roleDTO) {
         Role role = RepositoryUtils.getOneFromRepository(roleRepository,roleDTO.getId(),Role.class);
-        roleMapper.partialUpdate(roleDTO,role);
         establishRelation(roleDTO,role);
+        roleMapper.partialUpdate(roleDTO,role);
         roleRepository.save(role);
     }
     @Override
@@ -68,10 +68,13 @@ public class RoleServiceImpl implements RoleService {
             if (role.getSpecs()==null)
                 role.setSpecs(new LinkedHashSet<>());
             role.getSpecs().forEach(spec->spec.setRole(null)); //убираем связи для всех элементов списка
-
-            var specsIdFromDto = roleDTO.getSpecs().stream().map(SpecDTO::getId).collect(Collectors.toSet());
+            var specsIdFromDto = roleDTO.getSpecs().stream()
+                    .map(SpecDTO::getId)
+                    .collect(Collectors.toSet());
             Collection<Spec> specsFromDatabase = specRepository.findAllById(specsIdFromDto);
-            var idsFromDatabase = specsFromDatabase.stream().map(Spec::getId).collect(Collectors.toSet());
+            var idsFromDatabase = specsFromDatabase.stream()
+                    .map(Spec::getId)
+                    .collect(Collectors.toSet());
             if (RepositoryUtils.isClientIdsValid(idsFromDatabase, specsIdFromDto,Spec.class)){
                 specsFromDatabase.forEach(spec->spec.setRole(role));
                 role.setSpecs(new LinkedHashSet<>(specsFromDatabase));

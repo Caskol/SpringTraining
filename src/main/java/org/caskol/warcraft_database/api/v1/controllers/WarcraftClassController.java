@@ -20,7 +20,7 @@ import java.util.List;
 public class WarcraftClassController {
     private final WarcraftClassService warcraftClassService;
     @GetMapping
-    public ResponseEntity<List<WarcraftClassDTO>> getStats(@RequestParam(value = "page", required = false) Integer page,
+    public ResponseEntity<List<WarcraftClassDTO>> getClasses(@RequestParam(value = "page", required = false) Integer page,
                                                   @RequestParam(value = "pagesize", required = false) Integer pageSize){
         if ((page==null || page<0) || (pageSize==null || pageSize<2)){
             page=0;
@@ -29,24 +29,24 @@ public class WarcraftClassController {
         return ResponseEntity.ok(warcraftClassService.getAll(PageRequest.of(page,pageSize)));
     }
     @GetMapping("/{id}")
-    public ResponseEntity<WarcraftClassDTO> getStatWithId(@PathVariable("id") int id){
+    public ResponseEntity<WarcraftClassDTO> getClassWithId(@PathVariable("id") int id){
         return ResponseEntity.ok(warcraftClassService.getById(id));
     }
     @PatchMapping("/{id}")
-    public HttpStatus patchStat(@PathVariable("id") int id,@RequestBody WarcraftClassDTO warcraftClassDTO){
+    public HttpStatus patchClass(@PathVariable("id") int id,@RequestBody WarcraftClassDTO warcraftClassDTO){
         warcraftClassDTO.setId(id);
         warcraftClassService.update(warcraftClassDTO);
         return HttpStatus.OK;
     }
     @PostMapping
-    public ResponseEntity<WarcraftClassDTO> createStat(@RequestBody @Valid WarcraftClassDTO warcraftClassDTO, BindingResult bindingResult){
+    public ResponseEntity<WarcraftClassDTO> createClass(@RequestBody @Valid WarcraftClassDTO warcraftClassDTO, BindingResult bindingResult){
         if (bindingResult.hasErrors())
             throw new ValidationException(RestExceptionHandler.VALIDATION_EXCEPTION_MSG+RestExceptionHandler.getBindingErrorString(bindingResult));
         return ResponseEntity.ok(warcraftClassService.create(warcraftClassDTO));
     }
 
     @PutMapping("/{id}")
-    public HttpStatus putStat(@PathVariable("id") int id, @RequestBody @Valid WarcraftClassDTO warcraftClassDTO, BindingResult bindingResult){
+    public HttpStatus putClass(@PathVariable("id") int id, @RequestBody @Valid WarcraftClassDTO warcraftClassDTO, BindingResult bindingResult){
         if (bindingResult.hasErrors())
             throw new ValidationException(RestExceptionHandler.VALIDATION_EXCEPTION_MSG+RestExceptionHandler.getBindingErrorString(bindingResult));
         warcraftClassDTO.setId(id);
@@ -54,7 +54,7 @@ public class WarcraftClassController {
         return HttpStatus.OK;
     }
     @DeleteMapping("/{id}")
-    public HttpStatus deleteStat(@PathVariable("id") int id){
+    public HttpStatus deleteClass(@PathVariable("id") int id){
         warcraftClassService.delete(id);
         return HttpStatus.OK;
     }

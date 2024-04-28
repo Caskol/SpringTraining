@@ -6,9 +6,9 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface SpellSchoolService {
-    public SpellSchoolDTO getById(int id);
-    public void update(SpellSchoolDTO spellSchoolDTO);
-    public SpellSchoolDTO create(SpellSchoolDTO spellSchoolDTO);
-    public void delete(int id);
-    public List<SpellSchoolDTO> getAll(Pageable pageable);
+    SpellSchoolDTO getById(int id);
+    void update(SpellSchoolDTO spellSchoolDTO);
+    SpellSchoolDTO create(SpellSchoolDTO spellSchoolDTO);
+    void delete(int id);
+    List<SpellSchoolDTO> getAll(Pageable pageable);
 }

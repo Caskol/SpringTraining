@@ -17,7 +17,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/spell_school")
+@RequestMapping("/api/v1/spell_schools")
 public class SpellSchoolController {
     private final SpellSchoolService spellSchoolService;
     @GetMapping

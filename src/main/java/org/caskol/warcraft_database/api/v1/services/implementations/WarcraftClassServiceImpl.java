@@ -1,12 +1,15 @@
 package org.caskol.warcraft_database.api.v1.services.implementations;
 
 import lombok.RequiredArgsConstructor;
+import org.caskol.warcraft_database.api.v1.dto.ClassResourceDTO;
 import org.caskol.warcraft_database.api.v1.dto.SpecDTO;
 import org.caskol.warcraft_database.api.v1.dto.WarcraftClassDTO;
 import org.caskol.warcraft_database.api.v1.mappers.WarcraftClassMapper;
+import org.caskol.warcraft_database.api.v1.models.ClassResource;
 import org.caskol.warcraft_database.api.v1.models.Icon;
 import org.caskol.warcraft_database.api.v1.models.Spec;
 import org.caskol.warcraft_database.api.v1.models.WarcraftClass;
+import org.caskol.warcraft_database.api.v1.repositories.ClassResourceRepository;
 import org.caskol.warcraft_database.api.v1.repositories.IconRepository;
 import org.caskol.warcraft_database.api.v1.repositories.SpecRepository;
 import org.caskol.warcraft_database.api.v1.repositories.WarcraftClassRepository;
@@ -29,6 +32,7 @@ public class WarcraftClassServiceImpl implements WarcraftClassService {
     private final WarcraftClassMapper warcraftClassMapper;
     private final IconRepository iconRepository;
     private final SpecRepository specRepository;
+    private final ClassResourceRepository classResourceRepository;
 
     @Override
     public WarcraftClassDTO getById(int id) {
@@ -38,8 +42,8 @@ public class WarcraftClassServiceImpl implements WarcraftClassService {
     @Transactional(readOnly = false)
     public void update(WarcraftClassDTO warcraftClassDTO) {
         WarcraftClass warcraftClass = RepositoryUtils.getOneFromRepository(warcraftClassRepository,warcraftClassDTO.getId(),WarcraftClass.class);
-        warcraftClassMapper.partialUpdate(warcraftClassDTO,warcraftClass);
         establishConnection(warcraftClassDTO,warcraftClass);
+        warcraftClassMapper.partialUpdate(warcraftClassDTO,warcraftClass);
         warcraftClassRepository.save(warcraftClass);
     }
     @Override
@@ -82,6 +86,23 @@ public class WarcraftClassServiceImpl implements WarcraftClassService {
         if (warcraftClassDTO.getIcon()!=null){
             warcraftClass.setIcon(RepositoryUtils.getOneFromRepository(iconRepository,warcraftClassDTO.getIcon().getId(), Icon.class));
         }
+        //Bidirectional ManyToMany
+        if (warcraftClassDTO.getClassResources()!=null){
+            var classResourceIdsFromDto = warcraftClassDTO.getClassResources().stream()
+                    .map(ClassResourceDTO::getId)
+                    .collect(Collectors.toSet());
+            Collection<ClassResource> classResources = classResourceRepository.findAllById(classResourceIdsFromDto);
+            var idsFromDatabase = classResources.stream()
+                    .map(ClassResource::getId)
+                    .collect(Collectors.toSet());
+            if (RepositoryUtils.isClientIdsValid(idsFromDatabase, classResourceIdsFromDto, ClassResource.class)){
+                if (warcraftClass.getId()!=null){
+                    warcraftClass.getClassResourceList().forEach(classResource->classResource.getWarcraftClassList().remove(warcraftClass));
+                }
+                classResources.forEach(classResource->classResource.getWarcraftClassList().add(warcraftClass));
+                warcraftClass.setClassResourceList(new LinkedHashSet<>(classResources));
+            }
 
+        }
     }
 }

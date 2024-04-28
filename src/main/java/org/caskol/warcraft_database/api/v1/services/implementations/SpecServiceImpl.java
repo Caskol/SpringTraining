@@ -36,8 +36,8 @@ public class SpecServiceImpl implements SpecService {
     @Transactional(readOnly = false)
     public void update(SpecDTO specDTO) {
         Spec spec = RepositoryUtils.getOneFromRepository(specRepository,specDTO.getId(), Spec.class);
-        specMapper.partialUpdate(specDTO,spec);
         establishRelation(specDTO,spec);
+        specMapper.partialUpdate(specDTO,spec);
         specRepository.save(spec);
     }
     @Override
@@ -68,7 +68,7 @@ public class SpecServiceImpl implements SpecService {
         if (specDTO.getIcon()!=null){
             spec.setIcon(RepositoryUtils.getOneFromRepository(iconRepository,specDTO.getIcon().getId(), Icon.class));
         }
-        //Bidirectional OneToMany
+        //Bidirectional OneToMany (ManyToOne side)
         if (specDTO.getRole()!=null){
             if (spec.getRole()!=null && spec.getRole().getSpecs()!=null){ //если роль у спека уже есть
                 spec.getRole().getSpecs().remove(spec); //удаляем предыдущие связи
@@ -79,7 +79,7 @@ public class SpecServiceImpl implements SpecService {
             role.getSpecs().add(spec);
             spec.setRole(role);
         }
-        //Bidirectional OneToMany
+        //Bidirectional OneToMany (ManyToOne side)
         if (specDTO.getWarcraftClass()!=null){
             if (spec.getWarcraftClass()!=null && spec.getWarcraftClass().getSpecs()!=null){ //если роль у спека уже есть
                 spec.getWarcraftClass().getSpecs().remove(spec); //удаляем предыдущие связи
@@ -99,8 +99,14 @@ public class SpecServiceImpl implements SpecService {
             var idsFromDatabase = stats.stream()
                     .map(Stat::getId)
                     .collect(Collectors.toSet());
-            if (RepositoryUtils.isClientIdsValid(idsFromDatabase, statIdsFromDto, Stat.class))
+            if (RepositoryUtils.isClientIdsValid(idsFromDatabase, statIdsFromDto, Stat.class)){
+                if (spec.getId()!=null){
+                    spec.getStats().forEach(stat->stat.getSpecs().remove(spec));
+                }
+                stats.forEach(stat->stat.getSpecs().add(spec));
                 spec.setStats(new LinkedHashSet<>(stats));
+            }
+
         }
     }
 }

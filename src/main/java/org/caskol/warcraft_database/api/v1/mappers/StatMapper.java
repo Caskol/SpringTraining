@@ -6,8 +6,6 @@ import org.caskol.warcraft_database.api.v1.models.Spec;
 import org.caskol.warcraft_database.api.v1.models.Stat;
 import org.mapstruct.*;
 
-import java.util.List;
-
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING)
 public interface StatMapper {
     @Mapping(target = "id", ignore = true)
@@ -20,13 +18,10 @@ public interface StatMapper {
     @Named("AllDataToDTO")
     StatDTO allDataToDto(Stat stat);
 
-    @Named("SpecDTOWithoutLists")
     @Mapping(target = "role", ignore = true)
     @Mapping(target = "stats", ignore = true)
     @Mapping(target = "warcraftClass", ignore = true)
     SpecDTO toSpecDto(Spec spec);
-    @IterableMapping(qualifiedByName = "SpecDTOWithoutLists")
-    List<SpecDTO> toSpecDtoList(List<Spec> specList);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)

@@ -25,7 +25,4 @@ public class Icon{
     @NotBlank(message = "Это поле не может быть пустым")
     @Column(name = "icon_path")
     private String path;
-
-    @OneToOne(mappedBy = "icon")
-    private Role role;
 }

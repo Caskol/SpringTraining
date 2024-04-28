@@ -6,9 +6,9 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface ClassResourceService {
-    public ClassResourceDTO getById(int id);
-    public void update(ClassResourceDTO classResourceDTO);
-    public ClassResourceDTO create(ClassResourceDTO classResourceDTO);
-    public void delete(int id);
-    public List<ClassResourceDTO> getAll(Pageable pageable);
+    ClassResourceDTO getById(int id);
+    void update(ClassResourceDTO classResourceDTO);
+    ClassResourceDTO create(ClassResourceDTO classResourceDTO);
+    void delete(int id);
+    List<ClassResourceDTO> getAll(Pageable pageable);
 }

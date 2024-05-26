@@ -12,8 +12,8 @@ import java.util.Objects;
 @NoArgsConstructor
 public class SpecDTO {
     private Integer id;
-    @NotBlank(message = "Это поле не может быть пустым")
-    @Size(min = 4, message = "Это поле должно содержать как минимум 4 символа")
+    @NotBlank(message = "validation.cannot_be_blank")
+    @Size(min = 4, message = "validation.invalid_size")
     private String name;
     private String description;
     private RoleDTO role;

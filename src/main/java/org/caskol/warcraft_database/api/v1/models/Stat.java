@@ -22,9 +22,9 @@ public class Stat{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @NotBlank(message = "Это поле не может быть пустым")
+    @NotBlank(message = "validation.cannot_be_blank")
     @Column(name = "name")
-    @Size(min = 4, message = "Это поле должно содержать как минимум 4 символа")
+    @Size(min = 4, message = "validation.invalid_size")
     private String name;
 
     @ManyToMany(mappedBy = "stats")

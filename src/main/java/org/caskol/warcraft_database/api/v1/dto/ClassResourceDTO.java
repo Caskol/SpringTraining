@@ -14,8 +14,8 @@ import java.util.Objects;
 @NoArgsConstructor
 public class ClassResourceDTO{
     private Integer id;
-    @NotBlank(message = "validation.cannot_be_blank")
-    @Size(min = 4, message = "validation.invalid_size")
+    @NotBlank(message = "{validation.cannot_be_blank}")
+    @Size(min = 4, message = "{validation.invalid_size}")
     private String name;
 
     private List<WarcraftClassDTO> classes;

@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.caskol.warcraft_database.api.v1.dto.IconDTO;
 import org.caskol.warcraft_database.api.v1.services.IconService;
 import org.caskol.warcraft_database.utils.RestExceptionHandler;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Locale;
 
 
 @RestController
@@ -20,6 +22,7 @@ import java.util.List;
 @RequestMapping("/api/v1/icons")
 public class IconController {
     private final IconService iconService;
+    private final MessageSource messageSource;
 
     @GetMapping
     public ResponseEntity<List<IconDTO>> getIcons(@RequestParam(value = "page", required = false) Integer page,
@@ -43,18 +46,20 @@ public class IconController {
         return HttpStatus.OK;
     }
     @PutMapping("/{id}")
-    public HttpStatus putIcon(@PathVariable("id") int id, @RequestBody @Valid IconDTO iconDTO, BindingResult bindingResult){
+    public HttpStatus putIcon(@PathVariable("id") int id, @RequestBody @Valid IconDTO iconDTO,
+                              BindingResult bindingResult, Locale locale){
         if (bindingResult.hasErrors())
-            throw new ValidationException(RestExceptionHandler.VALIDATION_EXCEPTION_MSG + RestExceptionHandler.getBindingErrorString(bindingResult));
+            throw new ValidationException(messageSource.getMessage("validation.received_invalid_data",null, locale) + RestExceptionHandler.getBindingErrorString(bindingResult));
         iconDTO.setId(id);
         iconService.update(iconDTO);
         return HttpStatus.OK;
     }
 
     @PostMapping()
-    public ResponseEntity<IconDTO> createIcon(@RequestBody @Valid IconDTO iconDTO, BindingResult bindingResult){
+    public ResponseEntity<IconDTO> createIcon(@RequestBody @Valid IconDTO iconDTO,
+                                              BindingResult bindingResult, Locale locale){
         if (bindingResult.hasErrors())
-            throw new ValidationException(RestExceptionHandler.VALIDATION_EXCEPTION_MSG + RestExceptionHandler.getBindingErrorString(bindingResult));
+            throw new ValidationException(messageSource.getMessage("validation.received_invalid_data",null, locale) + RestExceptionHandler.getBindingErrorString(bindingResult));
         return ResponseEntity.ok(iconService.create(iconDTO));
     }
     @DeleteMapping("/{id}")

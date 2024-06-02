@@ -6,16 +6,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Collection;
 import java.util.Optional;
-
 public class RepositoryUtils {
 
     public static <T,ID> T getOneFromRepository(JpaRepository<T, ID> repository, ID id, Class<T> clazz){
         if (id==null)
-            throw new ValidationException(RestExceptionHandler.VALIDATION_EXCEPTION_MSG+ " id объекта " + clazz.getSimpleName() + " является недопустимым.");
+            throw new ValidationException("validation.received_invalid_data" + " id " + "validation");
         Optional<T> objectFromRepo = repository.findById(id);
         if (!objectFromRepo.isPresent())
-            throw new EntityNotFoundException(RestExceptionHandler.VALIDATION_EXCEPTION_MSG+ " id="
-                    + id+" объекта " + clazz.getSimpleName() + " не был найден.");
+            throw new EntityNotFoundException("validation.received_invalid_data" + String.format(" id=%s of %s was not found",id,clazz.getSimpleName()));
         return objectFromRepo.get();
     }
 
@@ -26,8 +24,8 @@ public class RepositoryUtils {
         }
         StringBuilder sb = new StringBuilder();
         for (T i : idsFromClient){
-            sb.append("id=").append(i).append(" не был найден.").append("\n");
+            sb.append("id=").append(i).append(" was not found.").append("\n");
         }
-        throw new ValidationException(RestExceptionHandler.VALIDATION_EXCEPTION_MSG+"Ошибки для объекта "+clazz.getSimpleName()+": "+ sb);
+        throw new ValidationException("validation.received_invalid_data"+"Errors for object "+clazz.getSimpleName()+": "+ sb);
     }
 }

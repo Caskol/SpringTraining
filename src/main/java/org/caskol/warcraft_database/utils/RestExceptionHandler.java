@@ -15,8 +15,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
-    public static final String VALIDATION_EXCEPTION_MSG = "Поля объекта были неверно заполнены. Дополнительная информация: ";
-    public static final String REFERENCE_ID_NOT_FOUND = "Чтобы задать связь с этим объектом необходимо указывать верный ID этого объекта";
 
     @ExceptionHandler(ValidationException.class)
     private ResponseEntity<String> handleValidationException(ValidationException e){
@@ -30,6 +28,8 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     private ResponseEntity<String> handleTransientException(TransientObjectException e){
         return new ResponseEntity<>("Нельзя создавать объекты будучи внутри другого объекта.", HttpStatus.BAD_REQUEST);
     }
+
+
     public static String getBindingErrorString(BindingResult bindingResult){
         StringBuilder errorsString = new StringBuilder();
         for (ObjectError error : bindingResult.getAllErrors()){

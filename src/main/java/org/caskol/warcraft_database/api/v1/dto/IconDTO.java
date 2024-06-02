@@ -12,9 +12,9 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class IconDTO implements Serializable {
     private Integer id;
-    @NotBlank(message = "validation.cannot_be_blank")
-    @Size(min = 4, message = "validation.invalid_size")
+    @NotBlank(message = "{validation.cannot_be_blank}")
+    @Size(min = 4, message = "{validation.invalid_size}")
     private String name;
-    @NotNull(message = "validation.cannot_be_blank")
+    @NotNull(message = "{validation.cannot_be_blank}")
     private String path;
 }

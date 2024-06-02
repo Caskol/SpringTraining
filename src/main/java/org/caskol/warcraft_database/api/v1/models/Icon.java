@@ -18,11 +18,11 @@ public class Icon{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @NotBlank(message = "validation.cannot_be_blank")
+    @NotBlank(message = "{validation.cannot_be_blank}")
     @Column(name = "name")
-    @Size(min = 4, message = "validation.invalid_size")
+    @Size(min = 4, message = "{validation.invalid_size}")
     private String name;
-    @NotBlank(message = "validation.cannot_be_blank")
+    @NotBlank(message = "{validation.cannot_be_blank}")
     @Column(name = "icon_path")
     private String path;
 }

@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.caskol.warcraft_database.api.v1.dto.SpecDTO;
 import org.caskol.warcraft_database.api.v1.services.SpecService;
 import org.caskol.warcraft_database.utils.RestExceptionHandler;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,12 +14,14 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Locale;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/specs")
 public class SpecController {
     private final SpecService specService;
+    private final MessageSource messageSource;
     @GetMapping
     public ResponseEntity<List<SpecDTO>> getSpecs(@RequestParam(value = "page", required = false) Integer page,
                                                   @RequestParam(value = "pagesize", required = false) Integer pageSize){
@@ -39,16 +42,18 @@ public class SpecController {
         return HttpStatus.OK;
     }
     @PostMapping
-    public ResponseEntity<SpecDTO> createSpec(@RequestBody @Valid SpecDTO specDTO, BindingResult bindingResult){
+    public ResponseEntity<SpecDTO> createSpec(@RequestBody @Valid SpecDTO specDTO,
+                                              BindingResult bindingResult, Locale locale){
         if (bindingResult.hasErrors())
-            throw new ValidationException(RestExceptionHandler.VALIDATION_EXCEPTION_MSG+RestExceptionHandler.getBindingErrorString(bindingResult));
+            throw new ValidationException(messageSource.getMessage("validation.received_invalid_data",null, locale)+RestExceptionHandler.getBindingErrorString(bindingResult));
         return ResponseEntity.ok(specService.create(specDTO));
     }
 
     @PutMapping("/{id}")
-    public HttpStatus putSpec(@PathVariable("id") int id, @RequestBody @Valid SpecDTO specDTO, BindingResult bindingResult){
+    public HttpStatus putSpec(@PathVariable("id") int id, @RequestBody @Valid SpecDTO specDTO,
+                              BindingResult bindingResult, Locale locale){
         if (bindingResult.hasErrors())
-            throw new ValidationException(RestExceptionHandler.VALIDATION_EXCEPTION_MSG+RestExceptionHandler.getBindingErrorString(bindingResult));
+            throw new ValidationException(messageSource.getMessage("validation.received_invalid_data",null, locale)+RestExceptionHandler.getBindingErrorString(bindingResult));
         specDTO.setId(id);
         specService.update(specDTO);
         return HttpStatus.OK;

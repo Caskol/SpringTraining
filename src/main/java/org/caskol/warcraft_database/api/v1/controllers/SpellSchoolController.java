@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.caskol.warcraft_database.api.v1.dto.SpellSchoolDTO;
 import org.caskol.warcraft_database.api.v1.services.SpellSchoolService;
 import org.caskol.warcraft_database.utils.RestExceptionHandler;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,12 +14,14 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Locale;
 
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/spell_schools")
 public class SpellSchoolController {
+    private final MessageSource messageSource;
     private final SpellSchoolService spellSchoolService;
     @GetMapping
     public ResponseEntity<List<SpellSchoolDTO>> getSpellSchools(@RequestParam(value = "page", required = false) Integer page,
@@ -40,17 +43,19 @@ public class SpellSchoolController {
         return HttpStatus.OK;
     }
     @PutMapping("/{id}")
-    public HttpStatus putSpellSchool(@PathVariable("id") int id, @RequestBody @Valid SpellSchoolDTO spellSchoolDTO, BindingResult bindingResult){
+    public HttpStatus putSpellSchool(@PathVariable("id") int id, @RequestBody @Valid SpellSchoolDTO spellSchoolDTO,
+                                     BindingResult bindingResult, Locale locale){
         if (bindingResult.hasErrors())
-            throw new ValidationException(RestExceptionHandler.VALIDATION_EXCEPTION_MSG + RestExceptionHandler.getBindingErrorString(bindingResult));
+            throw new ValidationException(messageSource.getMessage("validation.received_invalid_data",null, locale) + RestExceptionHandler.getBindingErrorString(bindingResult));
         spellSchoolDTO.setId(id);
         spellSchoolService.update(spellSchoolDTO);
         return HttpStatus.OK;
     }
     @PostMapping
-    public ResponseEntity<SpellSchoolDTO> createSpellSchool(@RequestBody @Valid SpellSchoolDTO spellSchoolDTO, BindingResult bindingResult){
+    public ResponseEntity<SpellSchoolDTO> createSpellSchool(@RequestBody @Valid SpellSchoolDTO spellSchoolDTO,
+                                                            BindingResult bindingResult, Locale locale){
         if (bindingResult.hasErrors())
-            throw new ValidationException(RestExceptionHandler.VALIDATION_EXCEPTION_MSG + RestExceptionHandler.getBindingErrorString(bindingResult));
+            throw new ValidationException(messageSource.getMessage("validation.received_invalid_data",null, locale) + RestExceptionHandler.getBindingErrorString(bindingResult));
         return ResponseEntity.ok(spellSchoolService.create(spellSchoolDTO));
     }
     @DeleteMapping("/{id}")

@@ -6,6 +6,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class WarcraftDatabaseApplication {
     public static void main(String[] args) {
-        SpringApplication.run(WarcraftDatabaseApplication.class, args);
+        var context = SpringApplication.run(WarcraftDatabaseApplication.class, args);
     }
 }

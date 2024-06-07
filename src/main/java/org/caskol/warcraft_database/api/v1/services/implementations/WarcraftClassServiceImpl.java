@@ -36,12 +36,12 @@ public class WarcraftClassServiceImpl implements WarcraftClassService {
 
     @Override
     public WarcraftClassDTO getById(int id) {
-        return warcraftClassMapper.allDataToDto(RepositoryUtils.getOneFromRepository(warcraftClassRepository,id,WarcraftClass.class));
+        return warcraftClassMapper.allDataToDto(RepositoryUtils.getObjectFromRepository(warcraftClassRepository,id,WarcraftClass.class));
     }
     @Override
     @Transactional(readOnly = false)
     public void update(WarcraftClassDTO warcraftClassDTO) {
-        WarcraftClass warcraftClass = RepositoryUtils.getOneFromRepository(warcraftClassRepository,warcraftClassDTO.getId(),WarcraftClass.class);
+        WarcraftClass warcraftClass = RepositoryUtils.getObjectFromRepository(warcraftClassRepository,warcraftClassDTO.getId(),WarcraftClass.class);
         establishConnection(warcraftClassDTO,warcraftClass);
         warcraftClassMapper.partialUpdate(warcraftClassDTO,warcraftClass);
         warcraftClassRepository.save(warcraftClass);
@@ -84,7 +84,7 @@ public class WarcraftClassServiceImpl implements WarcraftClassService {
         }
         //Unidirectional OneToOne
         if (warcraftClassDTO.getIcon()!=null){
-            warcraftClass.setIcon(RepositoryUtils.getOneFromRepository(iconRepository,warcraftClassDTO.getIcon().getId(), Icon.class));
+            warcraftClass.setIcon(RepositoryUtils.getObjectFromRepository(iconRepository,warcraftClassDTO.getIcon().getId(), Icon.class));
         }
         //Bidirectional ManyToMany
         if (warcraftClassDTO.getClassResources()!=null){

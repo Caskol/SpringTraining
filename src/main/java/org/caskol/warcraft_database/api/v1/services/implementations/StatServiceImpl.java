@@ -32,12 +32,12 @@ public class StatServiceImpl implements StatService {
     @Override
     public StatDTO getById(int id)
     {
-        return statMapper.allDataToDto(RepositoryUtils.getOneFromRepository(statRepository,id,Stat.class));
+        return statMapper.allDataToDto(RepositoryUtils.getObjectFromRepository(statRepository,id,Stat.class));
     }
     @Override
     @Transactional(readOnly = false)
     public void update(StatDTO statDTO) {
-        Stat stat = RepositoryUtils.getOneFromRepository(statRepository,statDTO.getId(),Stat.class);
+        Stat stat = RepositoryUtils.getObjectFromRepository(statRepository,statDTO.getId(),Stat.class);
         establishConnection(statDTO,stat);
         statMapper.partialUpdate(statDTO,stat);
         statRepository.save(stat);

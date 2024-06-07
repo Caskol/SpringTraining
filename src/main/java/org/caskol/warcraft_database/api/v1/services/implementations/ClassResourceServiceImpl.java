@@ -37,12 +37,12 @@ public class ClassResourceServiceImpl implements ClassResourceService {
     }
     @Override
     public ClassResourceDTO getById(int id) {
-        return classResourceMapper.allDataToDto(RepositoryUtils.getOneFromRepository(classResourceRepository,id,ClassResource.class));
+        return classResourceMapper.allDataToDto(RepositoryUtils.getObjectFromRepository(classResourceRepository,id,ClassResource.class));
     }
     @Override
     @Transactional(readOnly = false)
     public void update(ClassResourceDTO classResourceDTO) {
-        ClassResource classResource = RepositoryUtils.getOneFromRepository(classResourceRepository,classResourceDTO.getId(), ClassResource.class);
+        ClassResource classResource = RepositoryUtils.getObjectFromRepository(classResourceRepository,classResourceDTO.getId(), ClassResource.class);
         establishConnection(classResourceDTO,classResource);
         classResourceMapper.partialUpdate(classResourceDTO,classResource);
         classResourceRepository.save(classResource);

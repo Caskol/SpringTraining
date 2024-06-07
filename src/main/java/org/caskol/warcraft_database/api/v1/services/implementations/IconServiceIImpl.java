@@ -28,12 +28,12 @@ public class IconServiceIImpl implements IconService {
     }
     @Override
     public IconDTO getById(int id) {
-        return iconMapper.toDto(RepositoryUtils.getOneFromRepository(iconRepository,id,Icon.class));
+        return iconMapper.toDto(RepositoryUtils.getObjectFromRepository(iconRepository,id,Icon.class));
     }
     @Override
     @Transactional(readOnly = false)
     public void update(IconDTO iconDTO) {
-        Icon icon = RepositoryUtils.getOneFromRepository(iconRepository,iconDTO.getId(),Icon.class);
+        Icon icon = RepositoryUtils.getObjectFromRepository(iconRepository,iconDTO.getId(),Icon.class);
         iconMapper.partialUpdate(iconDTO,icon);
         iconRepository.save(icon);
     }

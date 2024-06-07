@@ -30,12 +30,12 @@ public class SpellSchoolServiceImpl implements SpellSchoolService {
     }
     @Override
     public SpellSchoolDTO getById(int id) {
-        return spellSchoolMapper.toDto(RepositoryUtils.getOneFromRepository(spellSchoolRepository,id,SpellSchool.class));
+        return spellSchoolMapper.toDto(RepositoryUtils.getObjectFromRepository(spellSchoolRepository,id,SpellSchool.class));
     }
     @Override
     @Transactional(readOnly = false)
     public void update(SpellSchoolDTO spellSchoolDTO) {
-        SpellSchool spellSchool = RepositoryUtils.getOneFromRepository(spellSchoolRepository,spellSchoolDTO.getId(),SpellSchool.class);
+        SpellSchool spellSchool = RepositoryUtils.getObjectFromRepository(spellSchoolRepository,spellSchoolDTO.getId(),SpellSchool.class);
         spellSchoolMapper.partialUpdate(spellSchoolDTO,spellSchool);
         spellSchoolRepository.save(spellSchool);
     }

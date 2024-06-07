@@ -1,4 +1,4 @@
-package org.caskol.warcraft_database.api.v1.security;
+package org.caskol.warcraft_database.api.v1.configurations;
 
 import lombok.RequiredArgsConstructor;
 import org.caskol.warcraft_database.api.v1.security.services.AppUserService;

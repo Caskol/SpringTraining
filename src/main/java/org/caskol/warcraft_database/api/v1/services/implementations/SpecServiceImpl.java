@@ -30,12 +30,12 @@ public class SpecServiceImpl implements SpecService {
 
     @Override
     public SpecDTO getById(int id) {
-         return specMapper.allDataToDto(RepositoryUtils.getOneFromRepository(specRepository,id,Spec.class));
+         return specMapper.allDataToDto(RepositoryUtils.getObjectFromRepository(specRepository,id,Spec.class));
     }
     @Override
     @Transactional(readOnly = false)
     public void update(SpecDTO specDTO) {
-        Spec spec = RepositoryUtils.getOneFromRepository(specRepository,specDTO.getId(), Spec.class);
+        Spec spec = RepositoryUtils.getObjectFromRepository(specRepository,specDTO.getId(), Spec.class);
         establishRelation(specDTO,spec);
         specMapper.partialUpdate(specDTO,spec);
         specRepository.save(spec);
@@ -66,14 +66,14 @@ public class SpecServiceImpl implements SpecService {
     private void establishRelation(SpecDTO specDTO, Spec spec){
         //Unidirectional OneToOne
         if (specDTO.getIcon()!=null){
-            spec.setIcon(RepositoryUtils.getOneFromRepository(iconRepository,specDTO.getIcon().getId(), Icon.class));
+            spec.setIcon(RepositoryUtils.getObjectFromRepository(iconRepository,specDTO.getIcon().getId(), Icon.class));
         }
         //Bidirectional OneToMany (ManyToOne side)
         if (specDTO.getRole()!=null){
             if (spec.getRole()!=null && spec.getRole().getSpecs()!=null){ //если роль у спека уже есть
                 spec.getRole().getSpecs().remove(spec); //удаляем предыдущие связи
             }
-            Role role = RepositoryUtils.getOneFromRepository(roleRepository,specDTO.getRole().getId(), Role.class);
+            Role role = RepositoryUtils.getObjectFromRepository(roleRepository,specDTO.getRole().getId(), Role.class);
             if (role.getSpecs()==null)
                 role.setSpecs(new LinkedHashSet<>());
             role.getSpecs().add(spec);
@@ -84,7 +84,7 @@ public class SpecServiceImpl implements SpecService {
             if (spec.getWarcraftClass()!=null && spec.getWarcraftClass().getSpecs()!=null){ //если роль у спека уже есть
                 spec.getWarcraftClass().getSpecs().remove(spec); //удаляем предыдущие связи
             }
-            WarcraftClass warcraftClass = RepositoryUtils.getOneFromRepository(warcraftClassRepository,specDTO.getWarcraftClass().getId(), WarcraftClass.class);
+            WarcraftClass warcraftClass = RepositoryUtils.getObjectFromRepository(warcraftClassRepository,specDTO.getWarcraftClass().getId(), WarcraftClass.class);
             if (warcraftClass.getSpecs()==null)
                 warcraftClass.setSpecs(new LinkedHashSet<>());
             warcraftClass.getSpecs().add(spec);

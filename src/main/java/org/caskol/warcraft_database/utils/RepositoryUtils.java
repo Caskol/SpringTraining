@@ -5,16 +5,15 @@ import jakarta.validation.ValidationException;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Collection;
-import java.util.Optional;
 public class RepositoryUtils {
+    //TODO: Надо что-то сделать с i18n
 
-    public static <T,ID> T getOneFromRepository(JpaRepository<T, ID> repository, ID id, Class<T> clazz){
+    public static <T,ID> T getObjectFromRepository(JpaRepository<T, ID> repository, ID id, Class<T> clazz){
         if (id==null)
             throw new ValidationException("validation.received_invalid_data" + " id " + "validation");
-        Optional<T> objectFromRepo = repository.findById(id);
-        if (!objectFromRepo.isPresent())
-            throw new EntityNotFoundException("validation.received_invalid_data" + String.format(" id=%s of %s was not found",id,clazz.getSimpleName()));
-        return objectFromRepo.get();
+        return repository.findById(id)
+                .orElseThrow(()->new EntityNotFoundException("validation.received_invalid_data"
+                        + String.format(" id=%s of %s was not found",id,clazz.getSimpleName())));
     }
 
     public static <T,U> boolean isClientIdsValid(Collection<T> idsFromDatabase, Collection<T> idsFromClient, Class<U> clazz){

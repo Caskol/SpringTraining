@@ -5,6 +5,7 @@ import jakarta.validation.ValidationException;
 import org.hibernate.TransientObjectException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
@@ -27,6 +28,11 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(TransientObjectException.class)
     private ResponseEntity<String> handleTransientException(TransientObjectException e){
         return new ResponseEntity<>("Нельзя создавать объекты будучи внутри другого объекта.", HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    private ResponseEntity<String> handleUsernameNotFoundException(UsernameNotFoundException e){
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
     }
 
 

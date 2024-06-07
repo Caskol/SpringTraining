@@ -31,12 +31,12 @@ public class RoleServiceImpl implements RoleService {
     private final RoleMapper roleMapper;
     @Override
     public RoleDTO getById(int id) {
-        return roleMapper.allDataToDto(RepositoryUtils.getOneFromRepository(roleRepository,id,Role.class));
+        return roleMapper.allDataToDto(RepositoryUtils.getObjectFromRepository(roleRepository,id,Role.class));
     }
     @Override
     @Transactional(readOnly = false)
     public void update(RoleDTO roleDTO) {
-        Role role = RepositoryUtils.getOneFromRepository(roleRepository,roleDTO.getId(),Role.class);
+        Role role = RepositoryUtils.getObjectFromRepository(roleRepository,roleDTO.getId(),Role.class);
         establishRelation(roleDTO,role);
         roleMapper.partialUpdate(roleDTO,role);
         roleRepository.save(role);
@@ -82,7 +82,7 @@ public class RoleServiceImpl implements RoleService {
         }
         //Unidirectional OneToOne
         if (roleDTO.getIcon()!=null){
-            role.setIcon(RepositoryUtils.getOneFromRepository(iconRepository,roleDTO.getIcon().getId(), Icon.class));
+            role.setIcon(RepositoryUtils.getObjectFromRepository(iconRepository,roleDTO.getIcon().getId(), Icon.class));
         }
     }
 }
